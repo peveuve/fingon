@@ -1,0 +1,11 @@
+
+syntax: regexp
+fingon*.jar
+syntax: regexp
+^javadoc$
+syntax: regexp
+^classes$
+syntax: regexp
+^archives$
+syntax: regexp
+^\.settings$

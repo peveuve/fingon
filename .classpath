@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="classes/substance-test" path="sources/substance-test"/>
+	<classpathentry kind="src" output="classes/synthesizer" path="sources/synthesizer"/>
+	<classpathentry kind="src" output="classes/sound-player" path="sources/sound-player"/>
+	<classpathentry kind="src" output="classes/player" path="sources/player"/>
+	<classpathentry kind="src" output="classes/talkingjava-synthesizer" path="sources/talkingjava-synthesizer"/>
+	<classpathentry kind="src" output="classes/jsapi-synthesizer" path="sources/jsapi-synthesizer"/>
+	<classpathentry kind="src" output="classes/freetts-synthesizer" path="sources/freetts-synthesizer"/>
+	<classpathentry kind="src" output="classes/core" path="sources/core"/>
+	<classpathentry kind="lib" path="lib/cmu_us_kal.jar"/>
+	<classpathentry kind="lib" path="lib/cmudict04.jar"/>
+	<classpathentry kind="lib" path="lib/cmulex.jar"/>
+	<classpathentry kind="lib" path="lib/en_us.jar"/>
+	<classpathentry kind="lib" path="lib/freetts-jsapi10.jar"/>
+	<classpathentry kind="lib" path="lib/freetts.jar"/>
+	<classpathentry kind="lib" path="lib/jl1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jogg-0.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/jorbis-0.0.15.jar"/>
+	<classpathentry kind="lib" path="lib/jsapi.jar"/>
+	<classpathentry kind="lib" path="lib/mp3spi1.9.4.jar"/>
+	<classpathentry kind="lib" path="lib/tritonus_jorbis-0.3.6.jar"/>
+	<classpathentry kind="lib" path="lib/tritonus_share-0.3.6.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Paul-Emile/Mes documents/substance-lite-6.jar"/>
+	<classpathentry kind="lib" path="/Tramper/lib/trident.jar"/>
+	<classpathentry kind="lib" path="lib/forms-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/swingx.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_13"/>
+	<classpathentry kind="lib" path="lib/windows/ext/cgjsapi.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.4.jar"/>
+	<classpathentry kind="output" path="classes/core"/>
+</classpath>

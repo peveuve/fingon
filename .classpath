@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" output="classes/substance-test" path="sources/substance-test"/>
-	<classpathentry kind="src" output="classes/synthesizer" path="sources/synthesizer"/>
-	<classpathentry kind="src" output="classes/sound-player" path="sources/sound-player"/>
-	<classpathentry kind="src" output="classes/player" path="sources/player"/>
 	<classpathentry kind="src" output="classes/talkingjava-synthesizer" path="sources/talkingjava-synthesizer"/>
-	<classpathentry kind="src" output="classes/jsapi-synthesizer" path="sources/jsapi-synthesizer"/>
 	<classpathentry kind="src" output="classes/freetts-synthesizer" path="sources/freetts-synthesizer"/>
 	<classpathentry kind="src" output="classes/core" path="sources/core"/>
 	<classpathentry kind="lib" path="lib/cmu_us_kal.jar"/>

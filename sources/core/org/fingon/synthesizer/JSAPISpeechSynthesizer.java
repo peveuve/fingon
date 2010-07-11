@@ -553,7 +553,7 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
      */
     public void stop() {
 	try {
-	    synthe.cancel();
+	    synthe.cancelAll();
 	} catch (EngineStateError e) {
 	    logger.error("engine state error : " + e.getMessage());
 	} catch (Exception e) {

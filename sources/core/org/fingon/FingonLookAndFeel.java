@@ -26,11 +26,13 @@ public class FingonLookAndFeel extends LookAndFeel {
 	uiDefaults.put("PasswordFieldUI", "org.fingon.FingonPasswordFieldUI");
 	
 	UIManager.put("Button.pressedSound", getClass().getResource("Menu popup.wav"));
+	UIManager.put("Button.selectedSound", getClass().getResource("Connect.wav"));
+	UIManager.put("Button.unselectedSound", getClass().getResource("Disconnect.wav"));
 	uiDefaults.put("ButtonUI", "org.fingon.FingonButtonUI");
-	//uiDefaults.put("MenuItemUI", "org.fingon.FingonButtonUI");
-
-	UIManager.put("ToggleButton.selectedSound", getClass().getResource("Connect.wav"));
-	UIManager.put("ToggleButton.unselectedSound", getClass().getResource("Disconnect.wav"));
+	uiDefaults.put("MenuUI", "org.fingon.FingonButtonUI");
+	uiDefaults.put("MenuItemUI", "org.fingon.FingonButtonUI");
+	uiDefaults.put("RadioButtonMenuItemUI", "org.fingon.FingonButtonUI");
+	uiDefaults.put("CheckBoxMenuItemUI", "org.fingon.FingonButtonUI");
 	uiDefaults.put("ToggleButtonUI", "org.fingon.FingonButtonUI");
 	uiDefaults.put("RadioButtonUI", "org.fingon.FingonButtonUI");
 	uiDefaults.put("CheckBoxUI", "org.fingon.FingonButtonUI");

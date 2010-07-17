@@ -3,6 +3,7 @@ package org.fingon.player;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +28,9 @@ import org.fingon.player.Player;
 
 
 /**
- * Music player (au, wav, aif, mp3 and ogg files) using java sound API
- * and third party libraries from JLayer and JCraft.
- * Use one instance for each play.
+ * Music player (au, wav, aif, mp3 and ogg files) using Java sound API (full Java API).
+ * Uses the Tritonus implementation to be able to play MP3 (JLayer) and Ogg Vorbis (JCraft).
+ * Not thread-safe, use one instance for each play.
  * @author Paul-Emile
  */
 public class SoundPlayer implements Player, Runnable {
@@ -37,8 +38,8 @@ public class SoundPlayer implements Player, Runnable {
     private Logger logger = Logger.getLogger(SoundPlayer.class);
     /** line used for the current play */
     private DataLine currentLine;
-    /** buffered decoded audio stream */
-    private BufferedInputStream bufferedDecodedStream;
+    /** decoded audio stream */
+    private InputStream decodedStream;
     /** decoded audio format */
     private AudioFormat decodedFormat;
     /** flag to stop the current play */
@@ -82,8 +83,8 @@ public class SoundPlayer implements Player, Runnable {
         AudioFormat encodedFormat = encodedStream.getFormat();
         decodedFormat = decodeFormat(encodedFormat);
         try {
-            AudioInputStream decodedStream = AudioSystem.getAudioInputStream(decodedFormat, encodedStream);
-            bufferedDecodedStream = new BufferedInputStream(decodedStream);
+            decodedStream = AudioSystem.getAudioInputStream(decodedFormat, encodedStream);
+            decodedStream = new BufferedInputStream(decodedStream);
         } catch (IllegalArgumentException e) {
             logger.error("audio conversion not supported.");
             logger.info("supported conversions: ");
@@ -99,29 +100,29 @@ public class SoundPlayer implements Player, Runnable {
 
     /**
      * Plays a sound from an URL and wait for the end.
-     * @param anUrl 
+     * @param audioUrl  
      * @see org.fingon.player.Player#playAndWait(java.net.URL)
      */
-    public void playAndWait(URL anUrl) throws PlayException {
+    public void playAndWait(URL audioUrl) throws PlayException {
         loop = false;
 
 	AudioInputStream encodedStream = null;
         try {
-            encodedStream = AudioSystem.getAudioInputStream(anUrl);
+            encodedStream = AudioSystem.getAudioInputStream(audioUrl);
         }
         catch (UnsupportedAudioFileException e) {
             logger.error("Audio url format unsupported", e);
             throw new PlayException();
         }
         catch (IOException e) {
-            logger.error("url "+anUrl+" unavailable", e);
+            logger.error("url "+audioUrl+" unavailable", e);
             throw new PlayException();
         }
 
         AudioFormat encodedFormat = encodedStream.getFormat();
         decodedFormat = decodeFormat(encodedFormat);
-        AudioInputStream decodedStream = AudioSystem.getAudioInputStream(decodedFormat, encodedStream);
-        bufferedDecodedStream = new BufferedInputStream(decodedStream);
+        decodedStream = AudioSystem.getAudioInputStream(decodedFormat, encodedStream);
+        decodedStream = new BufferedInputStream(decodedStream);
         
         Thread thread = new Thread(this);
         thread.start();
@@ -154,9 +155,8 @@ public class SoundPlayer implements Player, Runnable {
         }
         AudioFormat encodedFormat = encodedStream.getFormat();
         decodedFormat = decodeFormat(encodedFormat);
-        AudioInputStream decodedStream = AudioSystem.getAudioInputStream(decodedFormat, encodedStream);
-        bufferedDecodedStream = new BufferedInputStream(decodedStream);
-        
+        decodedStream = AudioSystem.getAudioInputStream(decodedFormat, encodedStream);
+        decodedStream = new BufferedInputStream(decodedStream);
         Thread thread = new Thread(this);
         thread.start();
     }
@@ -210,10 +210,10 @@ public class SoundPlayer implements Player, Runnable {
         
         byte[] data = new byte[BUFFER_SIZE];
         
-        if (bufferedDecodedStream.markSupported()) {
-            bufferedDecodedStream.mark(8000000);// minimum to loop the waiting music
+        if (decodedStream.markSupported()) {
+            decodedStream.mark(8000000);// a minimum to loop through the progress bar music
         } else {
-	    logger.error("mark unsupported for this audio stream");
+	    logger.debug("mark unsupported for this audio stream");
         }
         
         do {
@@ -233,17 +233,18 @@ public class SoundPlayer implements Player, Runnable {
                             }
                         }
                     }
-                    nBytesRead = bufferedDecodedStream.read(data, 0, data.length);
+                    nBytesRead = decodedStream.read(data, 0, data.length);
                     if (nBytesRead != -1) {
                         nBytesWritten = ((SourceDataLine)currentLine).write(data, 0, nBytesRead);
                         if (nBytesWritten != nBytesRead) {
-                            logger.warn(nBytesRead+" bytes read, "+nBytesWritten+" bytes written");
+                            logger.warn(nBytesRead+" bytes read, but "+nBytesWritten+" bytes played");
                         }
                     }
                 }
                 currentLine.drain();
-            
-		bufferedDecodedStream.reset();
+                if (decodedStream.markSupported()) {
+                    decodedStream.reset();
+                }
             } catch (IOException e) {
                 logger.error("error when reading audio stream", e);
             }
@@ -253,7 +254,7 @@ public class SoundPlayer implements Player, Runnable {
         currentLine.flush();
         currentLine.close();
         try {
-	    bufferedDecodedStream.close();
+	    decodedStream.close();
 	} catch (IOException e) {}
         stopped = true;
 	fireReadingEndedEvent(event);
@@ -264,6 +265,7 @@ public class SoundPlayer implements Player, Runnable {
      * @see org.fingon.player.Player#setOutput(java.io.File)
      */
     public void setOutput(File aFile) {
+	logger.warn("output to a file is not implemented");
     }
 
     /**
@@ -376,7 +378,7 @@ public class SoundPlayer implements Player, Runnable {
     public void next() {
         if (currentLine != null) {
             try {
-		bufferedDecodedStream.skip(STEP);
+		decodedStream.skip(STEP);
 	    } catch (IOException e) {}
             PlayEvent e = new PlayEvent(this);
             e.setNewValue(currentLine.getMicrosecondPosition());
@@ -391,7 +393,7 @@ public class SoundPlayer implements Player, Runnable {
     public void previous() {
         if (currentLine != null) {
             try {
-		bufferedDecodedStream.reset();
+		decodedStream.reset();
 	    } catch (IOException e) {}
             PlayEvent e = new PlayEvent(this);
             e.setNewValue(currentLine.getMicrosecondPosition());
@@ -400,7 +402,7 @@ public class SoundPlayer implements Player, Runnable {
     }
 
     /**
-     * is the player running ?
+     * Is the player running?
      * @return true if running, false otherwise
      */
     public boolean isRunning() {
@@ -692,7 +694,7 @@ public class SoundPlayer implements Player, Runnable {
      */
     protected void finalize() throws Throwable {
         this.stop();
-        bufferedDecodedStream.close();
+        decodedStream.close();
         super.finalize();
     }
 }

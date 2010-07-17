@@ -2,6 +2,8 @@ package org.fingon;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.URL;
 
 import javax.swing.JComponent;
@@ -27,7 +29,7 @@ import org.fingon.synthesizer.SpeechSynthesizer;
  * @author Paul-Emile
  * 
  */
-public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeExpansionListener, TreeModelListener {
+public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeExpansionListener, TreeModelListener, PropertyChangeListener {
     /** the instance common to every component */
     private static FingonTreeUI instance;
     /** expanded sound URL */
@@ -55,6 +57,7 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 	JTree tree = (JTree)c;
 	tree.addTreeSelectionListener(this);
 	tree.addTreeExpansionListener(this);
+	tree.addPropertyChangeListener(this);
 	TreeModel treeModel = tree.getModel();
 	if (treeModel != null) {
 	    treeModel.addTreeModelListener(this);
@@ -71,6 +74,7 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 	JTree tree = (JTree)c;
 	tree.removeTreeSelectionListener(this);
 	tree.removeTreeExpansionListener(this);
+	tree.removePropertyChangeListener(this);
 	TreeModel treeModel = tree.getModel();
 	if (treeModel != null) {
 	    treeModel.removeTreeModelListener(this);
@@ -162,6 +166,10 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 	return false;
     }
 
+    /**
+     * Says the label of the selected node in the tree.
+     * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event.TreeSelectionEvent)
+     */
     public void valueChanged(TreeSelectionEvent e) {
 	TreePath selectedPath = e.getNewLeadSelectionPath();
 	if (selectedPath != null) {
@@ -172,6 +180,10 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 	}
     }
 
+    /**
+     * Plays a sound when collapsing a node in the tree.
+     * @see javax.swing.event.TreeExpansionListener#treeCollapsed(javax.swing.event.TreeExpansionEvent)
+     */
     public void treeCollapsed(TreeExpansionEvent event) {
         try {
             SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
@@ -180,6 +192,10 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
         }
     }
 
+    /**
+     * Plays a sound when expanding a node in the tree.
+     * @see javax.swing.event.TreeExpansionListener#treeExpanded(javax.swing.event.TreeExpansionEvent)
+     */
     public void treeExpanded(TreeExpansionEvent event) {
         try {
             SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
@@ -188,34 +204,68 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
         }
     }
 
+    /**
+     * Says one or several nodes have changed in the tree.
+     * @see javax.swing.event.TreeModelListener#treeNodesChanged(javax.swing.event.TreeModelEvent)
+     */
     public void treeNodesChanged(TreeModelEvent e) {
 	Object[] changedChildren = e.getChildren();
+	Object source = e.getSource();
 	SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
 	synthesizer.stop();
 	for (Object changedChild : changedChildren) {
-	    synthesizer.play(changedChild.toString() + " changed");
+	    synthesizer.play(changedChild + " changed in " + source);
 	}
     }
 
+    /**
+     * Says one or several nodes have been inserted in the tree.
+     * @see javax.swing.event.TreeModelListener#treeNodesInserted(javax.swing.event.TreeModelEvent)
+     */
     public void treeNodesInserted(TreeModelEvent e) {
 	Object[] insertedChildren = e.getChildren();
+	Object source = e.getSource();
 	SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
 	synthesizer.stop();
 	for (Object insertedChild : insertedChildren) {
-	    synthesizer.play(insertedChild.toString() + " inserted");
+	    synthesizer.play(insertedChild + " added to " + source);
 	}
     }
 
+    /**
+     * Says one or several nodes have removed in the tree.
+     * @see javax.swing.event.TreeModelListener#treeNodesRemoved(javax.swing.event.TreeModelEvent)
+     */
     public void treeNodesRemoved(TreeModelEvent e) {
 	Object[] removedChildren = e.getChildren();
+	Object source = e.getSource();
 	SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-	//Locale currentLocale = synthesizer.getEngineLocale();
 	synthesizer.stop();
 	for (Object removedChild : removedChildren) {
-	    synthesizer.play(removedChild.toString() + " removed");
+	    synthesizer.play(removedChild + " removed from " + source);
 	}
     }
 
     public void treeStructureChanged(TreeModelEvent e) {
+    }
+
+    /**
+     * Adds this UI as tree model listener when the tree model has changed, 
+     * to be able to react when one or several nodes have changed in the tree.  
+     * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+     */
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+	String propertyName = evt.getPropertyName();
+	if (propertyName.equals(JTree.TREE_MODEL_PROPERTY)) {
+	    TreeModel newTreeModel = (TreeModel)evt.getNewValue();
+	    if (newTreeModel != null) {
+		newTreeModel.addTreeModelListener(this);
+	    }
+	    TreeModel oldTreeModel = (TreeModel)evt.getOldValue();
+	    if (oldTreeModel != null) {
+		oldTreeModel.removeTreeModelListener(this);
+	    }
+	}
     }
 }

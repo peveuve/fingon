@@ -80,14 +80,16 @@ public class FingonListUI extends ListUI implements ListSelectionListener {
      */
     public void valueChanged(ListSelectionEvent e) {
 	JList changedList = (JList)e.getSource();
-	if (!e.getValueIsAdjusting()) {
-	    Object[] selectedValues = changedList.getSelectedValues();
-	    if (selectedValues != null && selectedValues.length > 0) {
-		SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-		synthesizer.stop();
-		for (Object value : selectedValues) {
-		    synthesizer.play(value.toString());
-        	}
+	if (changedList.isShowing()) {
+	    if (!e.getValueIsAdjusting()) {
+    	    	Object[] selectedValues = changedList.getSelectedValues();
+    	    	if (selectedValues != null && selectedValues.length > 0) {
+    	    	    SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
+    	    	    synthesizer.stop();
+    	    	    for (Object value : selectedValues) {
+    	    		synthesizer.play(value.toString());
+    	    	    }
+    	    	}
 	    }
 	}
     }

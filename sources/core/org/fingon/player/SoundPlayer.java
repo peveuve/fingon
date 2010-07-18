@@ -676,9 +676,6 @@ public class SoundPlayer implements Player, Runnable {
 	if (extension.equalsIgnoreCase("ogg")) {
 	    return true;
 	}
-	if (extension.equalsIgnoreCase("ape")) {
-	    return true;
-	}
 	if (extension.equalsIgnoreCase("aiff")) {
 	    return true;
 	}

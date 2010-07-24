@@ -32,11 +32,7 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
     private URL finalDeterminateUrl;
     
     public FingonProgressBarUI() {
-	try {
-	    soundPlayer = (SoundPlayer)PlayerFactory.getPlayerByExtension("mp3");
-	} catch (PlayException e) {
-            logger.error(e.getMessage(), e);
-	}
+	super();
     }
     
     /**
@@ -58,6 +54,11 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
 	indeterminateMusicUrl = (URL)UIManager.get("ProgressBarUI.backgroundMusic");
 	intermediateDeterminateUrl = (URL)UIManager.get("ProgressBarUI.intermediateSound");
 	finalDeterminateUrl = (URL)UIManager.get("ProgressBarUI.finalSound");
+	try {
+	    soundPlayer = (SoundPlayer)PlayerFactory.getPlayerByExtension("mp3");
+	} catch (PlayException e) {
+            logger.error(e.getMessage(), e);
+	}
     }
 
     /**
@@ -67,6 +68,8 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
     public void uninstallUI(JComponent c) {
 	JProgressBar progress = (JProgressBar)c;
 	progress.removePropertyChangeListener(this);
+	soundPlayer.stop();
+	soundPlayer = null;
     }
 
     /**
@@ -95,13 +98,11 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
             if (soundPlayer != null) {
                 if (!progressBar.isIndeterminate()) {
                     int newValue = progressBar.getValue();
-                    int max = progressBar.getMaximum();
-                    int frameCount = 10;
-                    float step = max/frameCount;
+                    int maxValue = progressBar.getMaximum();
                     try {
-                	if (newValue == max) {
+                	if (newValue == maxValue) {
                 	    soundPlayer.play(finalDeterminateUrl);
-                	} else if (newValue%step == 0) {
+                	} else {
                 	    soundPlayer.play(intermediateDeterminateUrl);
                 	}
                     } catch (PlayException e) {

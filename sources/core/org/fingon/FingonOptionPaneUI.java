@@ -84,33 +84,46 @@ public class FingonOptionPaneUI extends BasicOptionPaneUI implements AncestorLis
     public void ancestorAdded(AncestorEvent event) {
 	JOptionPane optionPane = (JOptionPane)event.getComponent();
 
-	URL soundUrl = null;
         int messageType = optionPane.getMessageType();
+	String message = optionPane.getMessage().toString();
+	URL soundUrl = null;
         if (messageType == JOptionPane.ERROR_MESSAGE) {
             soundUrl = errorSound;
+            if (!message.endsWith("!")) {
+        	message = message.concat("!");
+            }
         } else if (messageType == JOptionPane.INFORMATION_MESSAGE) {
             soundUrl = informationSound;
         } else if (messageType == JOptionPane.PLAIN_MESSAGE) {
             soundUrl = informationSound;
         } else if (messageType == JOptionPane.QUESTION_MESSAGE) {
             soundUrl = questionSound;
+            if (!message.endsWith("?")) {
+        	message = message.concat("?");
+            }
         } else if (messageType == JOptionPane.WARNING_MESSAGE) {
             soundUrl = warningSound;
+            if (!message.endsWith("!")) {
+        	message = message.concat("!");
+            }
         }
-        try {
-	    SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
-	    player.play(soundUrl);
-        } catch (PlayException e1) {}
+        if (soundUrl != null) {
+            try {
+        	SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
+        	player.play(soundUrl);
+            } catch (PlayException e1) {}
+        }
         
-	Object message = optionPane.getMessage();
         SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
         synthesizer.stop();
-        synthesizer.play(message.toString());
+        synthesizer.play(message);
     }
 
     public void ancestorMoved(AncestorEvent event) {
     }
 
     public void ancestorRemoved(AncestorEvent event) {
+        SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
+        synthesizer.stop();
     }
 }

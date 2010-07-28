@@ -70,5 +70,7 @@ public class FingonToolTipUI extends ToolTipUI implements AncestorListener {
     }
 
     public void ancestorRemoved(AncestorEvent event) {
+	SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
+	synthesizer.stop();
     }
 }

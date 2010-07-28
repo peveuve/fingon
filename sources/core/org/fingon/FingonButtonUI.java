@@ -81,10 +81,12 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
     public void actionPerformed(ActionEvent e) {
 	AbstractButton button = (AbstractButton)e.getSource();
 	if (button.isShowing()) {
-	    try {
-		SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
-		player.play(pressedSound);
-	    } catch (PlayException e1) {}
+	    if (pressedSound != null) {
+		try {
+		    SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
+		    player.play(pressedSound);
+		} catch (PlayException e1) {}
+	    }
 	}
     }
 
@@ -96,9 +98,13 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
 		SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
 		int state = e.getStateChange();
 		if (state == ItemEvent.DESELECTED) {
-		    player.play(unselectedSound);
+		    if (unselectedSound != null) {
+			player.play(unselectedSound);
+		    }
 		} else if (state == ItemEvent.SELECTED) {
-		    player.play(selectedSound);
+		    if (selectedSound != null) {
+			player.play(selectedSound);
+		    }
 		}
 	    } catch (PlayException e1) {}
 	}
@@ -121,6 +127,8 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
 
     @Override
     public void mouseExited(MouseEvent e) {
+        SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
+        synthesizer.stop();
     }
 
     @Override

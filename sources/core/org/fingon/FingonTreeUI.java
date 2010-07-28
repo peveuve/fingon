@@ -185,11 +185,12 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
      * @see javax.swing.event.TreeExpansionListener#treeCollapsed(javax.swing.event.TreeExpansionEvent)
      */
     public void treeCollapsed(TreeExpansionEvent event) {
-        try {
-            SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
-            player.play(collapsedSound);
-        } catch (PlayException e) {
-        }
+	if (collapsedSound != null) {
+	    try {
+		SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
+		player.play(collapsedSound);
+	    } catch (PlayException e) {}
+	}
     }
 
     /**
@@ -197,10 +198,11 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
      * @see javax.swing.event.TreeExpansionListener#treeExpanded(javax.swing.event.TreeExpansionEvent)
      */
     public void treeExpanded(TreeExpansionEvent event) {
-        try {
-            SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
-            player.play(expandedSound);
-        } catch (PlayException e) {
+	if (expandedSound != null) {
+	    try {
+		SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
+		player.play(expandedSound);
+	    } catch (PlayException e) {}
         }
     }
 
@@ -210,12 +212,19 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
      */
     public void treeNodesChanged(TreeModelEvent e) {
 	Object[] changedChildren = e.getChildren();
-	Object source = e.getSource();
+	Object[] path = e.getPath();
+	
+	StringBuilder messageToSay = new StringBuilder();
+	for (Object changedChild : changedChildren) {
+	    messageToSay.append(changedChild);
+	    messageToSay.append(", ");
+	}
+	messageToSay.append(" changed in ");
+	messageToSay.append(path[path.length-1]);
+
 	SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
 	synthesizer.stop();
-	for (Object changedChild : changedChildren) {
-	    synthesizer.play(changedChild + " changed in " + source);
-	}
+	synthesizer.play(messageToSay.toString());
     }
 
     /**
@@ -224,12 +233,19 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
      */
     public void treeNodesInserted(TreeModelEvent e) {
 	Object[] insertedChildren = e.getChildren();
-	Object source = e.getSource();
+	Object[] path = e.getPath();
+	
+	StringBuilder messageToSay = new StringBuilder();
+	for (Object insertedChild : insertedChildren) {
+	    messageToSay.append(insertedChild);
+	    messageToSay.append(", ");
+	}
+	messageToSay.append(" added to ");
+	messageToSay.append(path[path.length-1]);
+	
 	SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
 	synthesizer.stop();
-	for (Object insertedChild : insertedChildren) {
-	    synthesizer.play(insertedChild + " added to " + source);
-	}
+	synthesizer.play(messageToSay.toString());
     }
 
     /**
@@ -238,12 +254,19 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
      */
     public void treeNodesRemoved(TreeModelEvent e) {
 	Object[] removedChildren = e.getChildren();
-	Object source = e.getSource();
+	Object[] path = e.getPath();
+	
+	StringBuilder messageToSay = new StringBuilder();
+	for (Object removedChild : removedChildren) {
+	    messageToSay.append(removedChild);
+	    messageToSay.append(", ");
+	}
+	messageToSay.append(" removed from ");
+	messageToSay.append(path[path.length-1]);
+	
 	SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
 	synthesizer.stop();
-	for (Object removedChild : removedChildren) {
-	    synthesizer.play(removedChild + " removed from " + source);
-	}
+	synthesizer.play(messageToSay.toString());
     }
 
     public void treeStructureChanged(TreeModelEvent e) {
@@ -251,7 +274,7 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 
     /**
      * Adds this UI as tree model listener when the tree model has changed, 
-     * to be able to react when one or several nodes have changed in the tree.  
+     * to be able to react when one or several nodes changed in the tree.  
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
     @Override

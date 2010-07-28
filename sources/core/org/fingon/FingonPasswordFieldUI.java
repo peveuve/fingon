@@ -79,11 +79,11 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
 
     @Override
     public void keyTyped(KeyEvent arg0) {
-	try {
-	    Player player = PlayerFactory.getPlayerByExtension("wav");
-	    player.play(keyTypedSound);
-	} catch (PlayException e) {
+	if (keyTypedSound != null) {
+	    try {
+		Player player = PlayerFactory.getPlayerByExtension("wav");
+		player.play(keyTypedSound);
+	    } catch (PlayException e) {}
 	}
     }
-
 }

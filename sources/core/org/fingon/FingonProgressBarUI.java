@@ -82,11 +82,11 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
         if ("indeterminate".equals(prop)) {
             if (soundPlayer != null) {
                 if (progressBar.isIndeterminate()) {
-                    // start playing music
-                    try {
-                	soundPlayer.playLoop(indeterminateMusicUrl);
-                    } catch (PlayException e) {
-                	logger.error(e.getMessage(), e);
+                    if (indeterminateMusicUrl != null) {
+                	// start playing music
+                	try {
+                	    soundPlayer.playLoop(indeterminateMusicUrl);
+                	} catch (PlayException e) {}
                     }
                 } else {
                     // stop playing music
@@ -101,13 +101,15 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
                     int maxValue = progressBar.getMaximum();
                     try {
                 	if (newValue == maxValue) {
-                	    soundPlayer.play(finalDeterminateUrl);
+                	    if (finalDeterminateUrl != null) {
+                		soundPlayer.play(finalDeterminateUrl);
+                	    }
                 	} else {
-                	    soundPlayer.play(intermediateDeterminateUrl);
+                	    if (intermediateDeterminateUrl != null) {
+                		soundPlayer.play(intermediateDeterminateUrl);
+                	    }
                 	}
-                    } catch (PlayException e) {
-                	logger.error(e.getMessage(), e);
-                    }
+                    } catch (PlayException e) {}
                 }
             }
         }

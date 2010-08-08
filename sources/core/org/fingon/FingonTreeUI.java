@@ -185,11 +185,14 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
      * @see javax.swing.event.TreeExpansionListener#treeCollapsed(javax.swing.event.TreeExpansionEvent)
      */
     public void treeCollapsed(TreeExpansionEvent event) {
-	if (collapsedSound != null) {
-	    try {
-		SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
-		player.play(collapsedSound);
-	    } catch (PlayException e) {}
+	JTree tree = (JTree)event.getSource();
+	if (tree.isShowing()) {
+	    if (collapsedSound != null) {
+    	    	try {
+    	    	    SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
+    	    	    player.play(collapsedSound);
+    	    	} catch (PlayException e) {}
+	    }
 	}
     }
 
@@ -198,12 +201,15 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
      * @see javax.swing.event.TreeExpansionListener#treeExpanded(javax.swing.event.TreeExpansionEvent)
      */
     public void treeExpanded(TreeExpansionEvent event) {
-	if (expandedSound != null) {
-	    try {
-		SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
-		player.play(expandedSound);
-	    } catch (PlayException e) {}
-        }
+	JTree tree = (JTree)event.getSource();
+	if (tree.isShowing()) {
+	    if (expandedSound != null) {
+    	    	try {
+    	    	    SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
+    	    	    player.play(expandedSound);
+    	    	} catch (PlayException e) {}
+            }
+	}
     }
 
     /**

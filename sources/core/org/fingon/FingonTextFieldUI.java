@@ -11,8 +11,9 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTextUI;
 import javax.swing.text.JTextComponent;
 
-import org.fingon.player.PlayerFactory;
 import org.fingon.synthesizer.SpeechSynthesizer;
+import org.fingon.synthesizer.SpeechSynthesizerFactory;
+import org.fingon.synthesizer.SynthesisException;
 
 /**
  * 
@@ -74,11 +75,13 @@ public class FingonTextFieldUI extends BasicTextUI implements KeyListener, Caret
 	if (mark != dot) {
 	    JTextComponent textComponent = (JTextComponent)e.getSource();
 	    String selectedText = textComponent.getSelectedText();
-    	    SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-    	    if (selectedText != null) {
-        	synthesizer.stop();
-                synthesizer.play(selectedText);
-    	    }
+	    try {
+		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+    	    	if (selectedText != null) {
+    	    	    synthesizer.stop();
+    	    	    synthesizer.play(selectedText);
+    	    	}
+	    } catch (SynthesisException e1) {}
 	}
     }
 
@@ -92,9 +95,11 @@ public class FingonTextFieldUI extends BasicTextUI implements KeyListener, Caret
 	char typedChar = e.getKeyChar();
 	typedString = typedString + typedChar;
 	if (typedChar == ' ') {
-	    SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-	    synthesizer.stop();
-	    synthesizer.play(typedString);
+	    try {
+		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+		synthesizer.stop();
+		synthesizer.play(typedString);
+	    } catch (SynthesisException e1) {}
 	    typedString = "";
 	}
     }

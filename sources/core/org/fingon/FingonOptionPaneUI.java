@@ -15,6 +15,8 @@ import org.fingon.player.PlayException;
 import org.fingon.player.PlayerFactory;
 import org.fingon.player.SoundPlayer;
 import org.fingon.synthesizer.SpeechSynthesizer;
+import org.fingon.synthesizer.SpeechSynthesizerFactory;
+import org.fingon.synthesizer.SynthesisException;
 
 /**
  * 
@@ -114,16 +116,20 @@ public class FingonOptionPaneUI extends BasicOptionPaneUI implements AncestorLis
             } catch (PlayException e1) {}
         }
         
-        SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-        synthesizer.stop();
-        synthesizer.play(message);
+        try {
+            SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+            synthesizer.stop();
+            synthesizer.play(message);
+	} catch (SynthesisException e1) {}
     }
 
     public void ancestorMoved(AncestorEvent event) {
     }
 
     public void ancestorRemoved(AncestorEvent event) {
-        SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-        synthesizer.stop();
+	try {
+	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthesizer.stop();
+	} catch (SynthesisException e1) {}
     }
 }

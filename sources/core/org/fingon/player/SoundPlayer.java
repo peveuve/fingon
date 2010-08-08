@@ -52,8 +52,6 @@ public class SoundPlayer implements Player, Runnable {
     private List<PlayListener> listener;
     /** decoded audio data buffer size */
     private static final int BUFFER_SIZE = 1024;
-    /** step for next and previous actions in decoded bytes */
-    private static final int STEP = 1000000;
     
     /**
      * Instantiates the first available mixer
@@ -144,12 +142,10 @@ public class SoundPlayer implements Player, Runnable {
 	AudioInputStream encodedStream = null;
         try {
             encodedStream = AudioSystem.getAudioInputStream(audioUrl);
-        }
-        catch (UnsupportedAudioFileException e) {
+        } catch (UnsupportedAudioFileException e) {
             logger.error("Audio url format unsupported", e);
             throw new PlayException();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error("url "+audioUrl+" unavailable", e);
             throw new PlayException();
         }
@@ -157,6 +153,7 @@ public class SoundPlayer implements Player, Runnable {
         decodedFormat = decodeFormat(encodedFormat);
         decodedStream = AudioSystem.getAudioInputStream(decodedFormat, encodedStream);
         decodedStream = new BufferedInputStream(decodedStream);
+        
         Thread thread = new Thread(this);
         thread.start();
     }
@@ -178,7 +175,7 @@ public class SoundPlayer implements Player, Runnable {
             ((SourceDataLine)currentLine).open(decodedFormat);
         }
         catch (LineUnavailableException e) {
-            logger.error("line unavailable", e);
+            logger.error("line unavailable, already used?", e);
             return;
         }
         
@@ -211,7 +208,22 @@ public class SoundPlayer implements Player, Runnable {
         byte[] data = new byte[BUFFER_SIZE];
         
         if (decodedStream.markSupported()) {
-            decodedStream.mark(8000000);// a minimum to loop through the progress bar music
+            float sampleRate = decodedFormat.getSampleRate();
+            int sampleSize = decodedFormat.getSampleSizeInBits();
+            Long duration = (Long)decodedFormat.getProperty("duration");
+            if (sampleRate == AudioSystem.NOT_SPECIFIED || sampleSize == AudioSystem.NOT_SPECIFIED || duration == null) {
+        	logger.debug("cannot calculate length of AudioInputStream with sample rate "+sampleRate+", sample size "+sampleSize+", duration "+duration);
+                decodedStream.mark(8000000);// a minimum to loop through the progress bar music
+            } else {
+        	float streamLengthInBytes = sampleRate * sampleSize/8 * duration/1000000;
+        	if (streamLengthInBytes > Integer.MAX_VALUE) {
+        	    logger.debug("length of AudioInputStream exceeds 2^31, cannot properly reset stream!");
+        	    decodedStream.mark(8000000);// a minimum to loop through the progress bar music
+        	} else {
+        	    logger.debug("length of audio stream buffer set: "+(int)streamLengthInBytes);
+        	    decodedStream.mark((int)streamLengthInBytes);
+        	}
+            }
         } else {
 	    logger.debug("mark unsupported for this audio stream");
         }
@@ -226,11 +238,13 @@ public class SoundPlayer implements Player, Runnable {
                     }
                     synchronized (listener) {
                         if (paused) {
+                            currentLine.stop();
                             try {
                         	listener.wait();
                             } catch (InterruptedException e) {
                                 logger.info("waiting play interrupted", e);
                             }
+                            currentLine.start();
                         }
                     }
                     nBytesRead = decodedStream.read(data, 0, data.length);
@@ -319,38 +333,23 @@ public class SoundPlayer implements Player, Runnable {
      * Pause the current play
      */
     public void pause() {
-        if (currentLine != null) {
-            if (currentLine.isOpen()) {
-                if (currentLine.isRunning()) {
-                    synchronized (listener) {
-                        paused = true;
-                        currentLine.drain();
-                        currentLine.stop();
-                    }
-                    PlayEvent event = new PlayEvent(this);
-                    fireReadingPausedEvent(event);
-                }
-            }
+        synchronized (listener) {
+            paused = true;
         }
+        PlayEvent event = new PlayEvent(this);
+        fireReadingPausedEvent(event);
     }
     
     /**
      * resume the current play
      */
     public void resume() {
-        if (currentLine != null) {
-            if (currentLine.isOpen()) {
-                if (!currentLine.isRunning()) {
-                    synchronized (listener) {
-                        paused = false;
-                        currentLine.start();
-                        listener.notify();
-                    }
-                    PlayEvent event = new PlayEvent(this);
-                    fireReadingResumedEvent(event);
-                }
-            }
+        synchronized (listener) {
+            paused = false;
+            listener.notify();
         }
+        PlayEvent event = new PlayEvent(this);
+        fireReadingResumedEvent(event);
     }
 
     /**
@@ -358,17 +357,8 @@ public class SoundPlayer implements Player, Runnable {
      */
     public void stop() {
         stopped = true;
-        if (currentLine != null) {
-            if (currentLine.isOpen()) {
-                if (currentLine.isRunning()) {
-                    currentLine.stop();
-                }
-                currentLine.flush();
-                currentLine.close();
-        	PlayEvent event = new PlayEvent(this);
-        	fireReadingStoppedEvent(event);
-            }
-        }
+        PlayEvent event = new PlayEvent(this);
+        fireReadingStoppedEvent(event);
     }
 
     /**
@@ -376,14 +366,9 @@ public class SoundPlayer implements Player, Runnable {
      * @see org.fingon.player.Player#next()
      */
     public void next() {
-        if (currentLine != null) {
-            try {
-		decodedStream.skip(STEP);
-	    } catch (IOException e) {}
-            PlayEvent e = new PlayEvent(this);
-            e.setNewValue(currentLine.getMicrosecondPosition());
-            fireNextReadEvent(e);
-        }
+        stop();
+        PlayEvent e = new PlayEvent(this);
+        fireNextReadEvent(e);
     }
 
     /**
@@ -391,12 +376,13 @@ public class SoundPlayer implements Player, Runnable {
      * @see org.fingon.player.Player#previous()
      */
     public void previous() {
-        if (currentLine != null) {
+        if (decodedStream != null) {
             try {
-		decodedStream.reset();
+        	if (decodedStream.markSupported()) {
+        	    decodedStream.reset();
+        	}
 	    } catch (IOException e) {}
             PlayEvent e = new PlayEvent(this);
-            e.setNewValue(currentLine.getMicrosecondPosition());
             firePreviousReadEvent(e);
         }
     }

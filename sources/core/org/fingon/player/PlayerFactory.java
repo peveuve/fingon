@@ -7,9 +7,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Logger;
-import org.fingon.synthesizer.JSAPISpeechSynthesizer;
-import org.fingon.synthesizer.SpeechSynthesizer;
-import org.fingon.synthesizer.SynthesisException;
 
 /**
  * Returns the right player following document or extension file
@@ -20,28 +17,12 @@ public class PlayerFactory {
     private static Logger logger = Logger.getLogger(PlayerFactory.class);
     /** service provider loader for player interface */
     private static ServiceLoader<Player> playerLoader;
-    /** A speech synthesizer for quick messages, notifications. Don't use it as a document player.
-     * You can't manage it with the speech control panel. */ 
-    private static SpeechSynthesizer speechSynthesizer;
     /** lock preventing several threads to use the service loader concurrently */
     private static Lock lock;
     
     static {
 	playerLoader = ServiceLoader.load(Player.class);
 	lock = new ReentrantLock();
-        try {
-	    speechSynthesizer = new JSAPISpeechSynthesizer();
-	} catch (SynthesisException e) {
-	    logger.error("can't instantiate the speech synthesizer", e);
-	}
-    }
-    
-    /**
-     * Returns the current speech synthesizer
-     * @return
-     */
-    public static SpeechSynthesizer getSpeechSynthesizer() {
-        return speechSynthesizer;
     }
     
     /**

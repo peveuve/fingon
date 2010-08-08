@@ -11,8 +11,9 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.ListUI;
 
-import org.fingon.player.PlayerFactory;
 import org.fingon.synthesizer.SpeechSynthesizer;
+import org.fingon.synthesizer.SpeechSynthesizerFactory;
+import org.fingon.synthesizer.SynthesisException;
 
 /**
  * Speaks the selected item(s) in the list.
@@ -84,11 +85,13 @@ public class FingonListUI extends ListUI implements ListSelectionListener {
 	    if (!e.getValueIsAdjusting()) {
     	    	Object[] selectedValues = changedList.getSelectedValues();
     	    	if (selectedValues != null && selectedValues.length > 0) {
-    	    	    SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-    	    	    synthesizer.stop();
-    	    	    for (Object value : selectedValues) {
-    	    		synthesizer.play(value.toString());
-    	    	    }
+    	    	    try {
+    	    		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+        	    	synthesizer.stop();
+        	    	for (Object value : selectedValues) {
+        	    	    synthesizer.play(value.toString());
+        	    	}
+    	    	    } catch (SynthesisException e1) {}
     	    	}
 	    }
 	}

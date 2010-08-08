@@ -19,6 +19,8 @@ import org.fingon.player.PlayException;
 import org.fingon.player.PlayerFactory;
 import org.fingon.player.SoundPlayer;
 import org.fingon.synthesizer.SpeechSynthesizer;
+import org.fingon.synthesizer.SpeechSynthesizerFactory;
+import org.fingon.synthesizer.SynthesisException;
 
 /**
  * 
@@ -119,16 +121,20 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
 	AbstractButton componentGainingFocus = (AbstractButton)e.getSource();
 	String text = componentGainingFocus.getText();
 	if (text != null && !text.equals("")) {
-            SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-            synthesizer.stop();
-            synthesizer.play(text);
+	    try {
+		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	        synthesizer.stop();
+	        synthesizer.play(text);
+	    } catch (SynthesisException e1) {}
 	}
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-        synthesizer.stop();
+	try {
+	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthesizer.stop();
+	} catch (SynthesisException e1) {}
     }
 
     @Override

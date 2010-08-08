@@ -24,6 +24,8 @@ import org.fingon.player.PlayException;
 import org.fingon.player.PlayerFactory;
 import org.fingon.player.SoundPlayer;
 import org.fingon.synthesizer.SpeechSynthesizer;
+import org.fingon.synthesizer.SpeechSynthesizerFactory;
+import org.fingon.synthesizer.SynthesisException;
 
 /**
  * @author Paul-Emile
@@ -174,9 +176,11 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 	TreePath selectedPath = e.getNewLeadSelectionPath();
 	if (selectedPath != null) {
 	    Object selectedComponent = selectedPath.getLastPathComponent();
-	    SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-	    synthesizer.stop();
-	    synthesizer.play(selectedComponent.toString());
+	    try {
+		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+		synthesizer.stop();
+		synthesizer.play(selectedComponent.toString());
+	    } catch (SynthesisException e1) {}
 	}
     }
 
@@ -228,9 +232,11 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 	messageToSay.append(" changed in ");
 	messageToSay.append(path[path.length-1]);
 
-	SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-	synthesizer.stop();
-	synthesizer.play(messageToSay.toString());
+	try {
+	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthesizer.stop();
+	    synthesizer.play(messageToSay.toString());
+    	} catch (SynthesisException e1) {}
     }
 
     /**
@@ -249,9 +255,11 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 	messageToSay.append(" added to ");
 	messageToSay.append(path[path.length-1]);
 	
-	SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-	synthesizer.stop();
-	synthesizer.play(messageToSay.toString());
+	try {
+	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthesizer.stop();
+	    synthesizer.play(messageToSay.toString());
+    	} catch (SynthesisException e1) {}
     }
 
     /**
@@ -270,9 +278,11 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 	messageToSay.append(" removed from ");
 	messageToSay.append(path[path.length-1]);
 	
-	SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-	synthesizer.stop();
-	synthesizer.play(messageToSay.toString());
+	try {
+	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthesizer.stop();
+	    synthesizer.play(messageToSay.toString());
+    	} catch (SynthesisException e1) {}
     }
 
     public void treeStructureChanged(TreeModelEvent e) {

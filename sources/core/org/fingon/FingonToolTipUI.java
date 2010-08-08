@@ -9,8 +9,9 @@ import javax.swing.event.AncestorListener;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.ToolTipUI;
 
-import org.fingon.player.PlayerFactory;
 import org.fingon.synthesizer.SpeechSynthesizer;
+import org.fingon.synthesizer.SpeechSynthesizerFactory;
+import org.fingon.synthesizer.SynthesisException;
 
 /**
  * @author Paul-Emile
@@ -60,9 +61,11 @@ public class FingonToolTipUI extends ToolTipUI implements AncestorListener {
     public void ancestorAdded(AncestorEvent event) {
 	String tipText = ((JToolTip)event.getComponent()).getTipText();
 	if (tipText != null) {
-	    SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-	    synthesizer.stop();
-	    synthesizer.play(tipText);
+	    try {
+		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+		synthesizer.stop();
+		synthesizer.play(tipText);
+	    } catch (SynthesisException e1) {}
 	}
     }
 
@@ -70,7 +73,9 @@ public class FingonToolTipUI extends ToolTipUI implements AncestorListener {
     }
 
     public void ancestorRemoved(AncestorEvent event) {
-	SpeechSynthesizer synthesizer = PlayerFactory.getSpeechSynthesizer();
-	synthesizer.stop();
+	try {
+	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthesizer.stop();
+    	} catch (SynthesisException e1) {}
     }
 }

@@ -19,7 +19,7 @@
 	<classpathentry kind="lib" path="/Tramper/lib/trident.jar"/>
 	<classpathentry kind="lib" path="lib/forms-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/swingx.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_13"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/windows/ext/cgjsapi.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.4.jar"/>
 	<classpathentry kind="lib" path="lib/substance-lite-6.jar"/>

@@ -25,6 +25,7 @@ It adds some assistive features to the user interface for the visually impaired 
 	- emits a sound each time the user types a character in a password field
 	- says the text of a tooltip displaying
 	- says the message of an option pane and emits a sound according to the message type
+	- emits a sound whose pitch is linked to the value selected with a slider
 
 ------------------------------------------------------------------------------
  System requirements
@@ -65,6 +66,8 @@ add the following jar files in your classpath:
 		 - freetts.jar
 
 copy speech.properties in the user's home directory (ex: C:\Documents and Settings\Paul-Emile)
+
+copy soundbank.gm either in the home directory of your application, or in <JRE_HOME>/lib/audio
 
 ------------------------------------------------------------------------------
  Alternate JSAPI implementations

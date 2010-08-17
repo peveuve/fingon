@@ -62,7 +62,9 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent event) {
 	JSlider slider = (JSlider)event.getSource();
-	final int value = slider.getValue();
+	int maxValue = slider.getMaximum();
+	int currentValue = slider.getValue();
+	final int value = currentValue*127/maxValue;
 	if (midiPlayer != null) {
 	    Runnable runnable = new Runnable() {
 		@Override

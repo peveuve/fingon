@@ -9,3 +9,4 @@ syntax: regexp
 ^archives$
 syntax: regexp
 ^\.settings$
+glob:*.log

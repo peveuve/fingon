@@ -112,7 +112,7 @@ public class FingonOptionPaneUI extends BasicOptionPaneUI implements AncestorLis
         if (soundUrl != null) {
             try {
         	SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
-        	player.play(soundUrl);
+        	player.playAndWait(soundUrl);
             } catch (PlayException e1) {}
         }
         

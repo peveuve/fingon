@@ -1,8 +1,10 @@
 package org.fingon;
 
 import java.awt.Graphics;
+import java.util.Dictionary;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -12,6 +14,9 @@ import javax.swing.plaf.SliderUI;
 import org.fingon.player.MIDIPlayer;
 import org.fingon.player.PlayException;
 import org.fingon.player.PlayerFactory;
+import org.fingon.synthesizer.SpeechSynthesizer;
+import org.fingon.synthesizer.SpeechSynthesizerFactory;
+import org.fingon.synthesizer.SynthesisException;
 
 public class FingonSliderUI extends SliderUI implements ChangeListener {
     private MIDIPlayer midiPlayer;
@@ -62,22 +67,36 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent event) {
 	JSlider slider = (JSlider)event.getSource();
-	int maxValue = slider.getMaximum();
-	int currentValue = slider.getValue();
-	final int value = currentValue*127/maxValue;
-	if (midiPlayer != null) {
-	    Runnable runnable = new Runnable() {
-		@Override
-		public void run() {
-		    midiPlayer.startNote(value);
+	if (slider.isShowing()) {
+	    int currentValue = slider.getValue();
+	    if (slider.getPaintLabels()) {
+		Dictionary<Integer, JComponent> labelTable = slider.getLabelTable();
+		JComponent label = labelTable.get(currentValue);
+		if (label != null && (label instanceof JLabel) ) {
 		    try {
-			Thread.sleep(400);
-		    } catch (InterruptedException e) {}
-		    midiPlayer.stopNote(value);
+    	    	        SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+    	    	        synthesizer.stop();
+    	    	        synthesizer.play(((JLabel)label).getText());
+    	    	    } catch (SynthesisException ex) {}
 		}
-	    };
-	    Thread thread = new Thread(runnable);
-	    thread.start();
+	    } else {
+		int maxValue = slider.getMaximum();
+		final int value = currentValue*127/maxValue;
+		if (midiPlayer != null) {
+		    Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+			    midiPlayer.startNote(value);
+			    try {
+				Thread.sleep(400);
+			    } catch (InterruptedException e) {}
+			    midiPlayer.stopNote(value);
+			}
+		    };
+		    Thread thread = new Thread(runnable);
+		    thread.start();
+		}
+	    }
 	}
     }
 }

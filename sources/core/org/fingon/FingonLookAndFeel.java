@@ -52,6 +52,8 @@ public class FingonLookAndFeel extends LookAndFeel {
 	
 	uiDefaults.put("ListUI", "org.fingon.FingonListUI");
 
+	uiDefaults.put("TabbedPaneUI", "org.fingon.FingonTabbedPaneUI");
+
 	uiDefaults.put("TableUI", "org.fingon.FingonTableUI");
 	uiDefaults.put("TableHeaderUI", "org.fingon.FingonTableHeaderUI");
 

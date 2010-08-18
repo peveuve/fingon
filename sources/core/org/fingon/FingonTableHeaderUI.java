@@ -1,6 +1,8 @@
 package org.fingon;
 
 import java.awt.Graphics;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;
@@ -72,10 +74,17 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
 	int toIndex = e.getToIndex();
 	TableColumn column = model.getColumn(toIndex);
 	Object headerValue = column.getHeaderValue();
+	Object[] columnAddedMsgArgs = {headerValue};
 	try {
 	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+
+	    ResourceBundle msg = ResourceBundle.getBundle("message", synthesizer.getEngineLocale());
+	    String columnAddedMsgPattern = msg.getString("columnAdded");
+	    MessageFormat columnAddedMsgFormat = new MessageFormat(columnAddedMsgPattern);
+	    String columnAddedMsg = columnAddedMsgFormat.format(columnAddedMsgArgs);
+	    
 	    synthesizer.stop();
-	    synthesizer.play(headerValue.toString() + " column added");
+	    synthesizer.play(columnAddedMsg);
 	} catch (SynthesisException ex) {}
     }
 
@@ -85,12 +94,28 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
 	int toIndex = e.getToIndex();
 	int fromIndex = e.getFromIndex();
 	if (fromIndex != toIndex) {
-	    TableColumn column = model.getColumn(toIndex);
-	    Object headerValue = column.getHeaderValue();
 	    try {
     	    	SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+    	    	
+    	    	ResourceBundle msg = ResourceBundle.getBundle("message", synthesizer.getEngineLocale());
+    	    	TableColumn column = model.getColumn(toIndex);
+    	    	TableColumn refColumn = null;
+    	    	String columnMovedMsgPattern = null;
+    	    	if (toIndex-1 >= 0) {
+    	    	    refColumn = model.getColumn(toIndex-1);
+    	    	    columnMovedMsgPattern = msg.getString("columnMovedAfter");
+    	    	} else {
+    	    	    refColumn = model.getColumn(toIndex+1);
+    	    	    columnMovedMsgPattern = msg.getString("columnMovedBefore");
+    	    	}
+    	    	Object refHeaderValue = refColumn.getHeaderValue();
+    	    	Object headerValue = column.getHeaderValue();
+    	    	Object[] columnMovedMsgArgs = {headerValue, refHeaderValue};
+    	    	MessageFormat columnMovedMsgFormat = new MessageFormat(columnMovedMsgPattern);
+    	    	String columnMovedMsg = columnMovedMsgFormat.format(columnMovedMsgArgs);
+    	    	
     	    	synthesizer.stop();
-    	    	synthesizer.play(headerValue.toString() + " column moved");
+    	    	synthesizer.play(columnMovedMsg);
 	    } catch (SynthesisException ex) {}
 	}
     }
@@ -98,10 +123,17 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
     @Override
     public void columnRemoved(TableColumnModelEvent e) {
 	int fromIndex = e.getFromIndex();
+	Object[] columnRemovedMsgArgs = {fromIndex};
 	try {
 	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    
+	    ResourceBundle msg = ResourceBundle.getBundle("message", synthesizer.getEngineLocale());
+	    String columnRemovedMsgPattern = msg.getString("columnRemoved");
+	    MessageFormat columnRemovedMsgFormat = new MessageFormat(columnRemovedMsgPattern);
+	    String columnRemovedMsg = columnRemovedMsgFormat.format(columnRemovedMsgArgs);
+	    
 	    synthesizer.stop();
-	    synthesizer.play("column "+fromIndex+" removed");
+	    synthesizer.play(columnRemovedMsg);
 	} catch (SynthesisException ex) {}
     }
 

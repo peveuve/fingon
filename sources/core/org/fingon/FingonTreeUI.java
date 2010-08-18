@@ -5,6 +5,8 @@ import java.awt.Rectangle;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
 import javax.swing.JTree;
@@ -223,19 +225,25 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
     public void treeNodesChanged(TreeModelEvent e) {
 	Object[] changedChildren = e.getChildren();
 	Object[] path = e.getPath();
+	Object parentNode = path[path.length-1];
 	
-	StringBuilder messageToSay = new StringBuilder();
+	StringBuilder nodesChangedList = new StringBuilder();
 	for (Object changedChild : changedChildren) {
-	    messageToSay.append(changedChild);
-	    messageToSay.append(", ");
+	    nodesChangedList.append(changedChild);
+	    nodesChangedList.append(", ");
 	}
-	messageToSay.append(" changed in ");
-	messageToSay.append(path[path.length-1]);
+	Object[] nodesChangedMsgArgs = {nodesChangedList, parentNode};
 
 	try {
 	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+
+	    ResourceBundle msg = ResourceBundle.getBundle("message", synthesizer.getEngineLocale());
+	    String nodesChangedMsgPattern = msg.getString("nodesChanged");
+	    MessageFormat nodesChangedMsgFormat = new MessageFormat(nodesChangedMsgPattern);
+	    String nodesChangedMsg = nodesChangedMsgFormat.format(nodesChangedMsgArgs);
+	    
 	    synthesizer.stop();
-	    synthesizer.play(messageToSay.toString());
+	    synthesizer.play(nodesChangedMsg);
     	} catch (SynthesisException e1) {}
     }
 
@@ -246,19 +254,25 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
     public void treeNodesInserted(TreeModelEvent e) {
 	Object[] insertedChildren = e.getChildren();
 	Object[] path = e.getPath();
+	Object parentNode = path[path.length-1];
 	
-	StringBuilder messageToSay = new StringBuilder();
+	StringBuilder nodesAddedList = new StringBuilder();
 	for (Object insertedChild : insertedChildren) {
-	    messageToSay.append(insertedChild);
-	    messageToSay.append(", ");
+	    nodesAddedList.append(insertedChild);
+	    nodesAddedList.append(", ");
 	}
-	messageToSay.append(" added to ");
-	messageToSay.append(path[path.length-1]);
+	Object[] nodesAddedMsgArgs = {nodesAddedList, parentNode};
 	
 	try {
 	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+
+	    ResourceBundle msg = ResourceBundle.getBundle("message", synthesizer.getEngineLocale());
+	    String nodesAddedMsgPattern = msg.getString("nodesAdded");
+	    MessageFormat nodesAddedMsgFormat = new MessageFormat(nodesAddedMsgPattern);
+	    String nodesAddedMsg = nodesAddedMsgFormat.format(nodesAddedMsgArgs);
+	    
 	    synthesizer.stop();
-	    synthesizer.play(messageToSay.toString());
+	    synthesizer.play(nodesAddedMsg);
     	} catch (SynthesisException e1) {}
     }
 
@@ -269,19 +283,25 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
     public void treeNodesRemoved(TreeModelEvent e) {
 	Object[] removedChildren = e.getChildren();
 	Object[] path = e.getPath();
+	Object parentNode = path[path.length-1];
 	
-	StringBuilder messageToSay = new StringBuilder();
+	StringBuilder nodesRemovedList = new StringBuilder();
 	for (Object removedChild : removedChildren) {
-	    messageToSay.append(removedChild);
-	    messageToSay.append(", ");
+	    nodesRemovedList.append(removedChild);
+	    nodesRemovedList.append(", ");
 	}
-	messageToSay.append(" removed from ");
-	messageToSay.append(path[path.length-1]);
+	Object[] nodesRemovedMsgArgs = {nodesRemovedList, parentNode};
 	
 	try {
 	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+
+	    ResourceBundle msg = ResourceBundle.getBundle("message", synthesizer.getEngineLocale());
+	    String nodesRemovedMsgPattern = msg.getString("nodesRemoved");
+	    MessageFormat nodesRemovedMsgFormat = new MessageFormat(nodesRemovedMsgPattern);
+	    String nodesRemovedMsg = nodesRemovedMsgFormat.format(nodesRemovedMsgArgs);
+	    
 	    synthesizer.stop();
-	    synthesizer.play(messageToSay.toString());
+	    synthesizer.play(nodesRemovedMsg);
     	} catch (SynthesisException e1) {}
     }
 

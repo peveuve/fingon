@@ -1,5 +1,6 @@
 package org.fingon;
 
+import java.awt.Graphics;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
@@ -70,6 +71,13 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
 	progress.removePropertyChangeListener(this);
 	soundPlayer.stop();
 	soundPlayer = null;
+    }
+
+    /**
+     * @see javax.swing.plaf.ComponentUI#update(java.awt.Graphics, javax.swing.JComponent)
+     */
+    @Override
+    public void update(Graphics arg0, JComponent arg1) {
     }
 
     /**

@@ -77,5 +77,4 @@ public class VoiceDesc {
     public String toString() {
         return name;
     }
-    
 }

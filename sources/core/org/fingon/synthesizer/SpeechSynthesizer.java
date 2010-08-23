@@ -3,9 +3,6 @@ package org.fingon.synthesizer;
 import java.util.List;
 import java.util.Locale;
 
-import javax.speech.EngineModeDesc;
-import javax.speech.synthesis.SynthesizerModeDesc;
-
 import org.fingon.player.Player;
 
 
@@ -51,7 +48,7 @@ public interface SpeechSynthesizer extends Player {
     /** 
      * list the available engines (languages)
      */
-    public List<SynthesizerModeDesc> listAvailableEngines();
+    public List<EngineDesc> listAvailableEngines();
     /** 
      * list the available voices 
      */
@@ -64,7 +61,7 @@ public interface SpeechSynthesizer extends Player {
      * return the current engine descriptor
      * @return
      */
-    public EngineModeDesc getEngineModeDesc();
+    public EngineDesc getEngineDesc();
     /**
      * Returns the current voice description
      * @return

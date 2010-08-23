@@ -3,8 +3,6 @@ package org.fingon.synthesizer;
 import java.util.EventObject;
 import java.util.List;
 
-import javax.speech.EngineModeDesc;
-
 
 /**
  * Speech event
@@ -18,7 +16,7 @@ public class SynthesisEvent extends EventObject {
     /** pitch  */
     private float pitchRange;
     /** engine  */
-    private EngineModeDesc engine;
+    private EngineDesc engine;
     /** voice  */
     private VoiceDesc voice;
     /** voices list */
@@ -76,14 +74,14 @@ public class SynthesisEvent extends EventObject {
     /**
      * @return engine.
      */
-    public EngineModeDesc getEngine() {
+    public EngineDesc getEngine() {
         return this.engine;
     }
 
     /**
      * @param engine  
      */
-    public void setEngine(EngineModeDesc engine) {
+    public void setEngine(EngineDesc engine) {
         this.engine = engine;
     }
 

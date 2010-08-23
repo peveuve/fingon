@@ -85,9 +85,9 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
 		int minorTickSpacing = slider.getMinorTickSpacing();
 		int majorTickSpacing = slider.getMajorTickSpacing();
 		int minValue = slider.getMinimum();
-		if ( (currentValue - minValue)%majorTickSpacing == 0) {
+		if ( (majorTickSpacing != 0) && (currentValue - minValue)%majorTickSpacing == 0) {
 		    volume = 127;
-		} else if ( (currentValue - minValue)%minorTickSpacing == 0) {
+		} else if ( (minorTickSpacing != 0) && (currentValue - minValue)%minorTickSpacing == 0) {
 		    volume = 64;
 		}
 		int maxValue = slider.getMaximum();

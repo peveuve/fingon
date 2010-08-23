@@ -143,6 +143,7 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	pitchSlide.setMinimum(0);
 	pitchSlide.setMaximum(100);
 	pitchSlide.setOrientation(JSlider.HORIZONTAL);
+	pitchSlide.setMinorTickSpacing(10);
 	pitchSlide.setPaintTicks(true);
 	Hashtable<Integer, JLabel> pitchTable = new Hashtable<Integer, JLabel>();
 	pitchLabelMin = new JLabel(label.getString("pitch.min"));
@@ -162,6 +163,7 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	pitchRangeSlide.setMinimum(0);
 	pitchRangeSlide.setMaximum(100);
 	pitchRangeSlide.setOrientation(JSlider.HORIZONTAL);
+	pitchRangeSlide.setMinorTickSpacing(10);
 	pitchRangeSlide.setPaintTicks(true);
 	Hashtable<Integer, JLabel> pitchRangeTable = new Hashtable<Integer, JLabel>();
 	pitchRangeLabelMin = new JLabel(label.getString("pitchRate.min"));

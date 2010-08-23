@@ -17,15 +17,18 @@ Fingon is an auxiliary look and feel for the Java Swing applications.
 It plugs an auditory user interface to your application using speech synthesis and sounds. 
 It adds some assistive features to the user interface for the visually impaired people:
 
-	- emits a sound or says the label when clicking a button, a radio button, a checkbox
-	- says the label of the selected item in a list
-	- says the label of the selected node in a tree
-	- plays a music when a progress bar is running
-	- says the words typed or selected in a textfield, a textarea, an editorpane, a textpane
-	- emits a sound each time the user types a character in a password field
-	- says the text of a tooltip displaying
-	- says the message of an option pane and emits a sound according to the message type
-	- emits a sound whose pitch is linked to the value selected with a slider
+ * button: says the label or emits a sound once the button is actioned.
+ * toggle button / radio button / checkbox / menu item: emits a different sound when the button is selected or unselected.
+ * list: says the label of the selected item.
+ * tree: says the label of the selected node. Emits a different sound when a node is expanded or collapsed. Says a node was added or removed from a parent node.
+ * progress bar: plays a music when a progress bar is running.
+ * textfield, textarea, editor pane, text pane: says the word just typed or the part of text selected.
+ * password field: emits a sound each time the user types a character.
+ * tooltip: says the text of the displayed tooltips.
+ * message dialog: says the message of the dialog and emits a sound according to the message type (error, warning, information).
+ * slider: if the ticks are displayed, emits a sound whose pitch and volume are linked to the value selected. The small values emit low pitch sounds, the big values emit high pitch sounds. Major ticks use maximum volume, minor ticks use medium ticks. If the labels are displayed, says the selected label instead.
+ * table: says the label of the selected cell, or the first cell of the selected row. Warns the user that a column has been moved, added or removed from the table.
+ * spinner: says the typed or selected value in the spinner.
 
 ------------------------------------------------------------------------------
  System requirements

@@ -88,9 +88,9 @@ public class MIDIPlayer implements Player, Runnable {
     /**
      * Starts playing a note of the given pitch with the loaded instrument.  
      * @param brightness the pitch of the note, from 0 to 127
+     * @param velocity the volume of the note, from 0 to 127
      */
-    public void startNote(int brightness) {
-	int velocity = 127;
+    public void startNote(int brightness, int velocity) {
         ShortMessage aStartMidiMessage = new ShortMessage();
         try {
 	    aStartMidiMessage.setMessage(ShortMessage.NOTE_ON, channelIndex, brightness, velocity);
@@ -103,9 +103,9 @@ public class MIDIPlayer implements Player, Runnable {
     /**
      * Stops playing the note of the given pitch.  
      * @param brightness the pitch of the note, from 0 to 127
+     * @param velocity the volume of the note, from 0 to 127
      */
-    public void stopNote(int brightness) {
-	int velocity = 127;
+    public void stopNote(int brightness, int velocity) {
         ShortMessage aStartMidiMessage = new ShortMessage();
         try {
 	    aStartMidiMessage.setMessage(ShortMessage.NOTE_OFF, channelIndex, brightness, velocity);

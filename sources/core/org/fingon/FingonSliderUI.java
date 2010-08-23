@@ -79,18 +79,29 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
     	    	        synthesizer.play(((JLabel)label).getText());
     	    	    } catch (SynthesisException ex) {}
 		}
-	    } else {
+	    }
+	    if (slider.getPaintTicks()) {
+		int volume = 0;
+		int minorTickSpacing = slider.getMinorTickSpacing();
+		int majorTickSpacing = slider.getMajorTickSpacing();
+		int minValue = slider.getMinimum();
+		if ( (currentValue - minValue)%majorTickSpacing == 0) {
+		    volume = 127;
+		} else if ( (currentValue - minValue)%minorTickSpacing == 0) {
+		    volume = 64;
+		}
 		int maxValue = slider.getMaximum();
 		final int value = currentValue*127/maxValue;
+		final int velocity = volume;
 		if (midiPlayer != null) {
 		    Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
-			    midiPlayer.startNote(value);
+			    midiPlayer.startNote(value, velocity);
 			    try {
-				Thread.sleep(400);
+    		    	    	Thread.sleep(400);
 			    } catch (InterruptedException e) {}
-			    midiPlayer.stopNote(value);
+			    midiPlayer.stopNote(value, velocity);
 			}
 		    };
 		    Thread thread = new Thread(runnable);

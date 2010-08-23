@@ -4,8 +4,10 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
+import org.fingon.tray.FingonTrayIcon;
+
 /**
- * 
+ * The Fingon "sound and feel".
  * @author Paul-Emile
  */
 public class FingonLookAndFeel extends LookAndFeel {
@@ -62,6 +64,8 @@ public class FingonLookAndFeel extends LookAndFeel {
 	UIManager.put("Tree.expandedSound", getClass().getResource("login.wav"));
 	UIManager.put("Tree.collapsedSound", getClass().getResource("logout.wav"));
 	uiDefaults.put("TreeUI", "org.fingon.FingonTreeUI");
+	
+	new FingonTrayIcon();
     }
 
     /**
@@ -69,7 +73,7 @@ public class FingonLookAndFeel extends LookAndFeel {
      */
     @Override
     public String getDescription() {
-	return "Fingon is an auxiliary look and feel which plugs a sound and feel in the current look and feel";
+	return "Fingon is an auxiliary look and feel which plugs an auditory user interface to your application";
     }
 
     /**

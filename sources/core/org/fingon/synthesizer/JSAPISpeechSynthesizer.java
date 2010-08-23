@@ -284,8 +284,8 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
      * Lists all the available engines but the time engines.
      * @return
      */
-    public List<SynthesizerModeDesc> listAvailableEngines() {
-	List<SynthesizerModeDesc> availableEngines = new ArrayList<SynthesizerModeDesc>();
+    public List<EngineDesc> listAvailableEngines() {
+	List<EngineDesc> availableEngines = new ArrayList<EngineDesc>();
 
 	EngineList list = Central.availableSynthesizers(null);
 	logger.debug(list.size() + " engines available");
@@ -296,7 +296,8 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
 		logger.info("time engine skipped");
 		continue;
 	    }
-	    availableEngines.add(engineDesc);
+	    EngineDesc engine = new EngineDesc(engineDesc);
+	    availableEngines.add(engine);
 	}
 
 	return availableEngines;
@@ -384,30 +385,23 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
             }
         }
             
-        SynthesisEvent event = new SynthesisEvent(this);
+        SynthesisEvent synthesisEvent = new SynthesisEvent(this);
         EngineModeDesc engineDesc = synthe.getEngineModeDesc();
-        event.setEngine(engineDesc);
-        this.fireEngineChanged(event);
-
-	float pitch = this.getPitch();
-	SynthesisEvent pitchEvent = new SynthesisEvent(this);
-	pitchEvent.setPitch(pitch);
-	this.firePitchChanged(pitchEvent);
-
-	float pitchRange = this.getPitchRange();
-	SynthesisEvent synthesisEvent = new SynthesisEvent(this);
-	synthesisEvent.setPitchRange(pitchRange);
-	this.firePitchRangeChanged(synthesisEvent);
-	    
-	List<VoiceDesc> voices = this.listAvailableVoices();
-	SynthesisEvent voiceListEvent = new SynthesisEvent(this);
-	voiceListEvent.setVoices(voices);
-	this.fireVoicesListChanged(voiceListEvent);
-
+        EngineDesc engine = new EngineDesc(engineDesc);
+        synthesisEvent.setEngine(engine);
 	VoiceDesc voice = this.getVoiceDesc();
-	SynthesisEvent voiceEvent = new SynthesisEvent(this);
-	voiceEvent.setVoice(voice);
-	this.fireVoiceChanged(voiceEvent);
+	synthesisEvent.setVoice(voice);
+	float pitch = this.getPitch();
+	synthesisEvent.setPitch(pitch);
+	float pitchRange = this.getPitchRange();
+	synthesisEvent.setPitchRange(pitchRange);
+	List<VoiceDesc> voices = this.listAvailableVoices();
+	synthesisEvent.setVoices(voices);
+        this.fireEngineChanged(synthesisEvent);
+	this.firePitchChanged(synthesisEvent);
+	this.firePitchRangeChanged(synthesisEvent);
+	this.fireVoicesListChanged(synthesisEvent);
+	this.fireVoiceChanged(synthesisEvent);
     }
 
     /**
@@ -472,22 +466,21 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
 	try {
 	    syntheProp.setVoice(voice);
 
-	    float pitch = this.getPitch();
-	    SynthesisEvent pitchEvent = new SynthesisEvent(this);
-	    pitchEvent.setPitch(pitch);
-	    this.firePitchChanged(pitchEvent);
-
-	    float pitchRange = this.getPitchRange();
 	    SynthesisEvent synthesisEvent = new SynthesisEvent(this);
+	    float pitch = this.getPitch();
+	    synthesisEvent.setPitch(pitch);
+	    float pitchRange = this.getPitchRange();
 	    synthesisEvent.setPitchRange(pitchRange);
-	    this.firePitchRangeChanged(synthesisEvent);
-	    
-	    SynthesisEvent voiceEvent = new SynthesisEvent(this);
 	    selectedVoice.setName(voice.getName());
 	    selectedVoice.setAge(voice.getAge());
 	    selectedVoice.setGender(voice.getGender());
-	    voiceEvent.setVoice(selectedVoice);
-	    this.fireVoiceChanged(voiceEvent);
+	    EngineDesc engine = this.getEngineDesc();
+	    synthesisEvent.setEngine(engine);
+	    synthesisEvent.setVoice(selectedVoice);
+	    
+	    this.firePitchChanged(synthesisEvent);
+	    this.firePitchRangeChanged(synthesisEvent);
+	    this.fireVoiceChanged(synthesisEvent);
 	    
 	    return true;
 	} catch (PropertyVetoException e) {
@@ -637,10 +630,12 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
 
     /**
      * 
-     * @see org.fingon.synthesizer.SpeechSynthesizer#getEngineModeDesc()
+     * @see org.fingon.synthesizer.SpeechSynthesizer#getEngineDesc()
      */
-    public EngineModeDesc getEngineModeDesc() {
-	return synthe.getEngineModeDesc();
+    public EngineDesc getEngineDesc() {
+	EngineModeDesc engineMode = synthe.getEngineModeDesc();
+	EngineDesc engineDesc = new EngineDesc(engineMode);
+	return engineDesc;
     }
     
     /**

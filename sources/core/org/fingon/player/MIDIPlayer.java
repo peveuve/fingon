@@ -20,22 +20,6 @@ import org.apache.log4j.Logger;
 public class MIDIPlayer implements Player, Runnable {
     /** logger */
     private static Logger logger = Logger.getLogger(MIDIPlayer.class);
-    /** Bright piano */
-    public static final int BRIGHT_PIANO = 1;
-    /** Honky Tonk Piano */
-    public static final int HONKY_TONK_PIANO = 3;
-    /** Vibraphone */
-    public static final int VIBRAPHONE = 11;
-    /** harmonica */
-    public static final int HARMONICA = 22;
-    /** Nylon String guitar */
-    public static final int NYLON_STRING_GUITAR = 24;
-    /** Electric Guitar (clean) */
-    public static final int CLEAN_ELECTRIC_GUITAR = 28;
-    /** Pizzicato Strings */
-    public static final int PIZZICATO_STRINGS = 45;
-    /** Harp */
-    public static final int HARP = 46;
     /** MIDI sequencer to play MIDI sequences from files */
     private Sequencer sequencer;
     /** MIDI synthesizer */

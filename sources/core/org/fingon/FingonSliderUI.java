@@ -6,6 +6,7 @@ import java.util.Dictionary;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ComponentUI;
@@ -24,7 +25,6 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
     public FingonSliderUI() {
 	try {
 	    midiPlayer = (MIDIPlayer)PlayerFactory.getPlayerByExtension("mid");
-	    midiPlayer.loadInstrument(MIDIPlayer.HARP);
 	} catch (PlayException e) {
 	    // no fallback, test the midiPlayer is null
 	}
@@ -46,6 +46,10 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
     public void installUI(JComponent c) {
 	JSlider slider = (JSlider)c;
 	slider.addChangeListener(this);
+	Integer instrumentIndex = UIManager.getInt("Slider.instrument");
+	if (midiPlayer != null) {
+	    midiPlayer.loadInstrument(instrumentIndex);
+	}
     }
 
     /**

@@ -60,7 +60,8 @@ public class FingonLookAndFeel extends LookAndFeel {
 	uiDefaults.put("TableHeaderUI", "org.fingon.FingonTableHeaderUI");
 
 	uiDefaults.put("SpinnerUI", "org.fingon.FingonSpinnerUI");
-	
+
+	UIManager.put("Slider.instrument", Integer.valueOf(46));
 	uiDefaults.put("SliderUI", "org.fingon.FingonSliderUI");
 
 	uiDefaults.put("ColorChooserUI", "org.fingon.FingonColorChooserUI");

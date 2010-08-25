@@ -63,6 +63,8 @@ public class FingonLookAndFeel extends LookAndFeel {
 	
 	uiDefaults.put("SliderUI", "org.fingon.FingonSliderUI");
 
+	uiDefaults.put("ColorChooserUI", "org.fingon.FingonColorChooserUI");
+
 	UIManager.put("Tree.expandedSound", getClass().getResource("login.wav"));
 	UIManager.put("Tree.collapsedSound", getClass().getResource("logout.wav"));
 	uiDefaults.put("TreeUI", "org.fingon.FingonTreeUI");

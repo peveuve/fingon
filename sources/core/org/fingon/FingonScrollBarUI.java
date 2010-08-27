@@ -77,25 +77,27 @@ public class FingonScrollBarUI extends ScrollBarUI implements ChangeListener {
 	    int currentValue = model.getValue();
 	    boolean adjusting = model.getValueIsAdjusting();
 	    int maxValue = model.getMaximum();
-	    final int value = currentValue*127/maxValue;
-	    
-	    if (adjusting) {
-		final int velocity = 64;
-	    	Runnable runnable = new Runnable() {
-	    	    @Override
-	    	    public void run() {
-	    		midiPlayer.startNote(value, velocity);
-	    		try {
-	    		    Thread.sleep(200);
-	    		} catch (InterruptedException e) {}
-	    		midiPlayer.stopNote(value, velocity);
-	    	    }
-	    	};
-		Thread thread = new Thread(runnable);
-		thread.start();
-	    } else {
-		// apparently scrollbars values are changed continuously, 
-		// so playing a note each time is unbearable 
+	    if (maxValue != 0) {
+		final int value = currentValue*127/maxValue;
+		
+		if (adjusting) {
+		    final int velocity = 64;
+		    Runnable runnable = new Runnable() {
+	    	    	@Override
+	    	    	public void run() {
+	    	    	    midiPlayer.startNote(value, velocity);
+	    	    	    try {
+	    	    		Thread.sleep(200);
+	    	    	    } catch (InterruptedException e) {}
+	    	    	    midiPlayer.stopNote(value, velocity);
+	    	    	}
+	    		};
+	    	    Thread thread = new Thread(runnable);
+	    	    thread.start();
+		} else {
+		    // apparently scrollbars values are changed continuously, 
+		    // so playing a note each time is unbearable 
+		}
 	    }
 	}
     }

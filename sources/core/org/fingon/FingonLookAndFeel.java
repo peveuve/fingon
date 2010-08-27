@@ -31,13 +31,13 @@ public class FingonLookAndFeel extends LookAndFeel {
 	UIManager.put("Button.selectedSound", getClass().getResource("Connect.wav"));
 	UIManager.put("Button.unselectedSound", getClass().getResource("Disconnect.wav"));
 	uiDefaults.put("ButtonUI", "org.fingon.FingonButtonUI");
-	uiDefaults.put("MenuUI", "org.fingon.FingonButtonUI");
-	uiDefaults.put("MenuItemUI", "org.fingon.FingonButtonUI");
-	uiDefaults.put("RadioButtonMenuItemUI", "org.fingon.FingonButtonUI");
-	uiDefaults.put("CheckBoxMenuItemUI", "org.fingon.FingonButtonUI");
 	uiDefaults.put("ToggleButtonUI", "org.fingon.FingonButtonUI");
 	uiDefaults.put("RadioButtonUI", "org.fingon.FingonButtonUI");
 	uiDefaults.put("CheckBoxUI", "org.fingon.FingonButtonUI");
+	uiDefaults.put("MenuUI", "org.fingon.FingonMenuItemUI");
+	uiDefaults.put("MenuItemUI", "org.fingon.FingonMenuItemUI");
+	uiDefaults.put("RadioButtonMenuItemUI", "org.fingon.FingonMenuItemUI");
+	uiDefaults.put("CheckBoxMenuItemUI", "org.fingon.FingonMenuItemUI");
 
 	UIManager.put("ProgressBarUI.backgroundMusic", getClass().getResource("Le seigneur des anneaux - Le retour du roi[1]_chapter60-01.mp3"));
 	UIManager.put("ProgressBarUI.intermediateSound", getClass().getResource("Default.wav"));

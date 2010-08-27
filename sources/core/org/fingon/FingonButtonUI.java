@@ -28,11 +28,11 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
     /** the instance common to every component */
     private static FingonButtonUI instance;
     /** selected sound URL */
-    private URL selectedSound;
+    protected URL selectedSound;
     /** pressed sound URL */
-    private URL pressedSound;
+    protected URL pressedSound;
     /** unselected sound URL */
-    private URL unselectedSound;
+    protected URL unselectedSound;
 
     /**
      * @see javax.swing.plaf.ComponentUI#installUI(javax.swing.JComponent)

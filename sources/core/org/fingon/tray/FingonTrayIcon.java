@@ -15,7 +15,6 @@ import java.awt.TrayIcon;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
-import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 import org.fingon.IconFactory;

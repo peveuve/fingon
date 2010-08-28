@@ -64,14 +64,6 @@ public class FingonTrayIcon implements ActionListener, SynthesisListener {
 	    trayImage = Toolkit.getDefaultToolkit().createImage(this.getClass().getResource("org/fingon/person/delete_user.png"));
 	}
 	
-        Runnable runnable = new Runnable() {
-	    @Override
-	    public void run() {
-	        settingDialog = new SpeechSynthesizerDialog();
-	    }
-	};
-	SwingUtilities.invokeLater(runnable);
-
 	ResourceBundle label = ResourceBundle.getBundle("message");
         
         trayIcon = new TrayIcon(trayImage, label.getString("title"));
@@ -131,6 +123,9 @@ public class FingonTrayIcon implements ActionListener, SynthesisListener {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
+	if (settingDialog == null) {
+	    settingDialog = new SpeechSynthesizerDialog();
+	}
 	settingDialog.setVisible(true);
     }
 
@@ -140,7 +135,9 @@ public class FingonTrayIcon implements ActionListener, SynthesisListener {
     @Override
     protected void finalize() throws Throwable {
 	super.finalize();
-	settingDialog.dispose();
+	if (settingDialog != null) {
+	    settingDialog.dispose();
+	}
 	SystemTray.getSystemTray().remove(trayIcon);
     }
 

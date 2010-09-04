@@ -92,7 +92,7 @@ public class FingonScrollBarUI extends ScrollBarUI implements ChangeListener {
 	    	    	    midiPlayer.stopNote(value, velocity);
 	    	    	}
 	    		};
-	    	    Thread thread = new Thread(runnable);
+	    	    Thread thread = new Thread(runnable, "scrollbar adjusting MIDI note");
 	    	    thread.start();
 		} else {
 		    // apparently scrollbars values are changed continuously, 

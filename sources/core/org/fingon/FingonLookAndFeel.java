@@ -24,7 +24,7 @@ public class FingonLookAndFeel extends LookAndFeel {
 	uiDefaults.put("TextAreaUI", "org.fingon.FingonTextAreaUI");
 	uiDefaults.put("TextPaneUI", "org.fingon.FingonTextPaneUI");
 	uiDefaults.put("EditorPaneUI", "org.fingon.FingonEditorPaneUI");
-	UIManager.put("PasswordField.keyTyped", getClass().getResource("Menu popup.wav"));
+	UIManager.put("PasswordField.keyTypedSound", getClass().getResource("Menu popup.wav"));
 	uiDefaults.put("PasswordFieldUI", "org.fingon.FingonPasswordFieldUI");
 	
 	UIManager.put("Button.pressedSound", getClass().getResource("Menu popup.wav"));

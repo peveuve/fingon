@@ -45,7 +45,7 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
     @Override
     public void installUI(JComponent c) {
 	super.installUI(c);
-	keyTypedSound = (URL)UIManager.get("PasswordField.keyTyped");
+	keyTypedSound = (URL)UIManager.get("PasswordField.keyTypedSound");
 	JPasswordField textc = (JPasswordField)c;
 	textc.addKeyListener(this);
     }

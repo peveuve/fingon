@@ -15,6 +15,9 @@ import org.apache.log4j.Logger;
 import org.fingon.player.PlayException;
 import org.fingon.player.PlayerFactory;
 import org.fingon.player.SoundPlayer;
+import org.fingon.synthesizer.SpeechSynthesizer;
+import org.fingon.synthesizer.SpeechSynthesizerFactory;
+import org.fingon.synthesizer.SynthesisException;
 
 /**
  * 
@@ -101,7 +104,7 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
                     soundPlayer.stop();
                 }
             }
-            progressBar.repaint();
+            //progressBar.repaint();
         } else if ("value".equals(prop)) {
             if (soundPlayer != null) {
                 if (!progressBar.isIndeterminate()) {
@@ -119,6 +122,16 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
                 	}
                     } catch (PlayException e) {}
                 }
+            }
+        } else if ("string".equals(prop)) {
+            if (progressBar.isStringPainted() && progressBar.isShowing()) {
+        	String string = progressBar.getString();
+        	try {
+		    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    	    synthesizer.stop();
+		    synthesizer.play(string);
+		} catch (SynthesisException e) {
+		}
             }
         }
     }

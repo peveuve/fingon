@@ -86,15 +86,10 @@ public class FingonTextFieldUI extends BasicTextUI implements KeyListener, Caret
     }
 
     public void keyPressed(KeyEvent e) {
-    }
-
-    public void keyReleased(KeyEvent e) {
-    }
-
-    public void keyTyped(KeyEvent e) {
+	int typedKeyCode = e.getKeyCode();
 	char typedChar = e.getKeyChar();
 	typedString = typedString + typedChar;
-	if (typedChar == ' ') {
+	if (typedKeyCode == KeyEvent.VK_SPACE || typedKeyCode == KeyEvent.VK_ENTER) {
 	    try {
 		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
 		synthesizer.stop();
@@ -102,6 +97,12 @@ public class FingonTextFieldUI extends BasicTextUI implements KeyListener, Caret
 	    } catch (SynthesisException e1) {}
 	    typedString = "";
 	}
+    }
+
+    public void keyReleased(KeyEvent e) {
+    }
+
+    public void keyTyped(KeyEvent e) {
     }
     
     @Override

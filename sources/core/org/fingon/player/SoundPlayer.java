@@ -92,7 +92,7 @@ public class SoundPlayer implements Player, Runnable {
             throw new PlayException("audio conversion not supported.");
         }
         
-        Thread thread = new Thread(this);
+        Thread thread = new Thread(this, "sound play");
         thread.start();
     }
 
@@ -122,7 +122,7 @@ public class SoundPlayer implements Player, Runnable {
         decodedStream = AudioSystem.getAudioInputStream(decodedFormat, encodedStream);
         decodedStream = new BufferedInputStream(decodedStream);
         
-        Thread thread = new Thread(this);
+        Thread thread = new Thread(this, "sound play");
         thread.start();
         try {
             thread.join();
@@ -154,7 +154,7 @@ public class SoundPlayer implements Player, Runnable {
         decodedStream = AudioSystem.getAudioInputStream(decodedFormat, encodedStream);
         decodedStream = new BufferedInputStream(decodedStream);
         
-        Thread thread = new Thread(this);
+        Thread thread = new Thread(this, "sound play");
         thread.start();
     }
 

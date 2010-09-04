@@ -47,7 +47,7 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
 	JSlider slider = (JSlider)c;
 	slider.addChangeListener(this);
 	Integer instrumentIndex = UIManager.getInt("Slider.instrument");
-	if (midiPlayer != null) {
+	if (midiPlayer != null && instrumentIndex != null) {
 	    midiPlayer.loadInstrument(instrumentIndex);
 	}
     }
@@ -68,6 +68,7 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
     public void update(Graphics g, JComponent c) {
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void stateChanged(ChangeEvent event) {
 	JSlider slider = (JSlider)event.getSource();
@@ -108,7 +109,7 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
 			    midiPlayer.stopNote(value, velocity);
 			}
 		    };
-		    Thread thread = new Thread(runnable);
+		    Thread thread = new Thread(runnable, "slider tick MIDI note");
 		    thread.start();
 		}
 	    }

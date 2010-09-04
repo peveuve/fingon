@@ -17,7 +17,7 @@ import javax.sound.midi.Synthesizer;
 
 import org.apache.log4j.Logger;
 
-public class MIDIPlayer implements Player, Runnable {
+public class MIDIPlayer implements Player {
     /** logger */
     private static Logger logger = Logger.getLogger(MIDIPlayer.class);
     /** MIDI sequencer to play MIDI sequences from files */
@@ -35,7 +35,6 @@ public class MIDIPlayer implements Player, Runnable {
         try {
             // for MIDI sequences playback
 	    sequencer = MidiSystem.getSequencer();
-	    sequencer.open();
 	    
 	    // for MIDI synthesis on the fly
             synthesizer = MidiSystem.getSynthesizer();
@@ -113,6 +112,9 @@ public class MIDIPlayer implements Player, Runnable {
     public void play(URL anUrl) throws PlayException {
 	try {
 	    Sequence sequence = MidiSystem.getSequence(anUrl);
+	    if (!sequencer.isOpen()) {
+		sequencer.open();
+	    }
 	    sequencer.setSequence(sequence);
 	    sequencer.start();
 	} catch (InvalidMidiDataException e) {
@@ -121,6 +123,9 @@ public class MIDIPlayer implements Player, Runnable {
 	} catch (IOException e) {
 	    logger.error("IO error when reading the MIDI data pointed by the URL");
 	    throw new PlayException("IO error when reading the MIDI data pointed by the URL");
+	} catch (MidiUnavailableException e) {
+	    logger.error("sequencer unavailable");
+	    throw new PlayException("sequencer unavailable");
 	}
     }
 
@@ -128,6 +133,9 @@ public class MIDIPlayer implements Player, Runnable {
     public void playAndWait(URL anUrl) throws PlayException {
 	try {
 	    Sequence sequence = MidiSystem.getSequence(anUrl);
+	    if (!sequencer.isOpen()) {
+		sequencer.open();
+	    }
 	    sequencer.setSequence(sequence);
 	    sequencer.start();
 	} catch (InvalidMidiDataException e) {
@@ -136,6 +144,9 @@ public class MIDIPlayer implements Player, Runnable {
 	} catch (IOException e) {
 	    logger.error("IO error when reading the MIDI data pointed by the URL");
 	    throw new PlayException("IO error when reading the MIDI data pointed by the URL");
+	} catch (MidiUnavailableException e) {
+	    logger.error("sequencer unavailable");
+	    throw new PlayException("sequencer unavailable");
 	}
     }
 
@@ -143,6 +154,9 @@ public class MIDIPlayer implements Player, Runnable {
     public void playLoop(URL anUrl) throws PlayException {
 	try {
 	    Sequence sequence = MidiSystem.getSequence(anUrl);
+	    if (!sequencer.isOpen()) {
+		sequencer.open();
+	    }
 	    sequencer.setSequence(sequence);
 	    sequencer.setLoopStartPoint(0);
 	    sequencer.setLoopEndPoint(-1);
@@ -154,6 +168,9 @@ public class MIDIPlayer implements Player, Runnable {
 	} catch (IOException e) {
 	    logger.error("IO error when reading the MIDI data pointed by the URL");
 	    throw new PlayException("IO error when reading the MIDI data pointed by the URL");
+	} catch (MidiUnavailableException e) {
+	    logger.error("sequencer unavailable");
+	    throw new PlayException("sequencer unavailable");
 	}
     }
 
@@ -186,11 +203,12 @@ public class MIDIPlayer implements Player, Runnable {
 
     @Override
     public int getVolume() throws PlayException {
-	return 0;
+	return channel.getController(7);
     }
 
     @Override
     public void setVolume(int volume) {
+	channel.controlChange(7, volume);
     }
 
     @Override
@@ -229,18 +247,14 @@ public class MIDIPlayer implements Player, Runnable {
 	sequencer.setTickPosition(0);
     }
 
-    @Override
-    public void run() {
-    }
-
     /**
      * @see java.lang.Object#finalize()
      */
     @Override
     protected void finalize() throws Throwable {
 	super.finalize();
+	sequencer.close();
 	synthesizer.close();
 	receiver.close();
-	sequencer.close();
     }
 }

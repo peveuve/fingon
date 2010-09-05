@@ -145,7 +145,7 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
 	}
 	// if not found, load the first engine available
 	if (!engineFound) {
-	    EngineList list = Central.availableSynthesizers(null);
+	    EngineList list = getAvailableSynthesizers();
 	    if (list.size() > 0) {
                 SynthesizerModeDesc eng = (SynthesizerModeDesc) list.get(0);
                 Locale engineLocale = eng.getLocale();
@@ -173,7 +173,7 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
 	if (synthe != null) {
 	    currentEngine = synthe.getEngineModeDesc().getEngineName();
 	}
-	EngineList list = Central.availableSynthesizers(null);
+	EngineList list = getAvailableSynthesizers();
 	for (int i = 0; i < list.size(); i++) {
 	    SynthesizerModeDesc eng = (SynthesizerModeDesc) list.get(i);
 	    Locale engineLocale = eng.getLocale();
@@ -280,6 +280,10 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
 	}
     }
 
+    protected EngineList getAvailableSynthesizers() {
+	return Central.availableSynthesizers(null);
+    }
+    
     /**
      * Lists all the available engines but the time engines.
      * @return
@@ -287,7 +291,7 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
     public List<EngineDesc> listAvailableEngines() {
 	List<EngineDesc> availableEngines = new ArrayList<EngineDesc>();
 
-	EngineList list = Central.availableSynthesizers(null);
+	EngineList list = getAvailableSynthesizers();
 	logger.debug(list.size() + " engines available");
 	for (int i = 0; i < list.size(); i++) {
 	    SynthesizerModeDesc engineDesc = (SynthesizerModeDesc) list.get(i);
@@ -340,7 +344,7 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
     public void loadEngine(String name, String mode, Locale locale) throws SynthesisException {
 	SynthesizerModeDesc required = null;
 
-	EngineList list = Central.availableSynthesizers(null);
+	EngineList list = getAvailableSynthesizers();
 	for (int i = 0; i < list.size(); i++) {
 	    SynthesizerModeDesc eng = (SynthesizerModeDesc) list.get(i);
 	    String engineName = eng.getEngineName();

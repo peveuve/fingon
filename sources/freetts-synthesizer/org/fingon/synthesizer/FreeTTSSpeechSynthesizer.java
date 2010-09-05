@@ -4,6 +4,7 @@ import java.beans.PropertyVetoException;
 import java.io.File;
 
 import javax.sound.sampled.AudioFileFormat;
+import javax.speech.EngineList;
 import javax.speech.synthesis.SynthesizerProperties;
 import javax.speech.synthesis.Voice;
 
@@ -14,6 +15,7 @@ import org.fingon.player.SoundPlayer;
 
 import com.sun.speech.freetts.audio.JavaStreamingAudioPlayer;
 import com.sun.speech.freetts.audio.SingleFileAudioPlayer;
+import com.sun.speech.freetts.jsapi.FreeTTSEngineCentral;
 import com.sun.speech.freetts.jsapi.FreeTTSVoice;
 
 /**
@@ -37,6 +39,20 @@ public class FreeTTSSpeechSynthesizer extends JSAPISpeechSynthesizer {
 	// prop.setProperty("mbrola.base", "c:\\Program Files\\mbrola");
     }
 
+    /**
+     * Useful to bypass the need for the file speech.properties in the user home directory.
+     * @see org.fingon.synthesizer.JSAPISpeechSynthesizer#getAvailableSynthesizers()
+     */
+    @Override
+    protected EngineList getAvailableSynthesizers() {
+	try {
+	    FreeTTSEngineCentral central = new FreeTTSEngineCentral();
+	    return central.createEngineList(null); 
+	} catch (Exception e) {
+	    return null;
+	}
+    }
+    
     /**
      * The volume's useful values in FreeTTS synthesizer are between 0.5 and 1.0 
      * @see org.fingon.synthesizer.JSAPISpeechSynthesizer#getVolume()

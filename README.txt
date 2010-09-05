@@ -64,14 +64,13 @@ add the following jar files in your classpath:
 	Java Speech API (JSAPI):
 	 - jsapi.jar
 		JSAPI implementation FreeTTS (US voice):
+		 - fingon-freetts-synthesizer.jar
 		 - cmu_us_kal.jar
 		 - cmudict04.jar
 		 - cmulex.jar
 		 - en_us.jar
 		 - freetts-jsapi10.jar
 		 - freetts.jar
-
-copy speech.properties in the user's home directory (ex: C:\Documents and Settings\Paul-Emile)
 
 copy soundbank.gm either in the home directory of your application, or in <JRE_HOME>/lib/audio
 
@@ -92,6 +91,7 @@ This is a proprietary product, free for non-commercial use only.
 To switch to TalkingJava, follow these steps:
 
 	- remove all FreeTTS jars from your classpath
+	- add fingon-talkingjava-synthesizer.jar in your classpath
 	- download TalkingJava zip file from http://cloudgarden1.com/TalkingJavaSDK-170.zip
 	- extract and add cgjsapi170.dll in the library path of your application (ex: lib\windows\x86\)
 	- extract and add cgjsapi.jar in the extension path of your application (ex: lib\ext\)
@@ -99,3 +99,5 @@ To switch to TalkingJava, follow these steps:
 		java -cp lib\fingon.jar;... -Djava.ext.dirs=lib\ext -Djava.library.path=lib\windows\x86 mypackage.MyMainClass 
 
 Others JSAPI implementations exist but they have not been tested with Fingon.
+A classic JSAPI installation requires to copy speech.properties in the user's home directory (ex: C:\Documents and Settings\Paul-Emile)
+

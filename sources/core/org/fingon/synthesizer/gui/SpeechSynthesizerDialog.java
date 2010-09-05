@@ -7,7 +7,6 @@ import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.lang.reflect.Method;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -19,12 +18,16 @@ import javax.swing.JRootPane;
 import javax.swing.JSlider;
 import javax.swing.SpringLayout;
 import javax.swing.SpringUtilities;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.apache.log4j.Logger;
+import org.fingon.player.PlayEvent;
+import org.fingon.player.PlayException;
+import org.fingon.player.PlayListener;
 import org.fingon.synthesizer.EngineDesc;
 import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
@@ -37,7 +40,7 @@ import org.fingon.synthesizer.VoiceDesc;
  * A dialog to manage the speech synthesizer.
  * @author Paul-Emile
  */
-public class SpeechSynthesizerDialog extends JDialog implements SynthesisListener, ChangeListener, ItemListener {
+public class SpeechSynthesizerDialog extends JDialog implements SynthesisListener, ChangeListener, ItemListener, PlayListener {
     /** SpeechSynthesizerDialog.java long */
     private static final long serialVersionUID = -5621132632123579337L;
 
@@ -57,28 +60,28 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
     private JComboBox listVoices;
 
     /**  */
+    private JLabel volumeLabel;
+
+    /**  */
+    private JSlider volumeSlide;
+
+    /**  */
+    private JLabel rateLabel;
+
+    /**  */
+    private JSlider rateSlide;
+
+    /**  */
     private JLabel pitchLabel;
 
     /**  */
     private JSlider pitchSlide;
 
     /**  */
-    private JLabel pitchLabelMin;
-
-    /**  */
-    private JLabel pitchLabelMax;
-
-    /**  */
     private JLabel pitchRangeLabel;
 
     /**  */
     private JSlider pitchRangeSlide;
-
-    /**  */
-    private JLabel pitchRangeLabelMin;
-
-    /**  */
-    private JLabel pitchRangeLabelMax;
 
     /**
      * 
@@ -135,6 +138,34 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	listVoices.addItemListener(this);
 	this.getContentPane().add(listVoices);
 
+	volumeLabel = new JLabel(label.getString("volume"));
+	this.getContentPane().add(volumeLabel);
+
+	volumeSlide = new JSlider();
+	volumeSlide.setName("volumeSlide");
+	volumeSlide.setMinimum(0);
+	volumeSlide.setMaximum(100);
+	volumeSlide.setOrientation(JSlider.HORIZONTAL);
+	volumeSlide.setMinorTickSpacing(10);
+	volumeSlide.setSnapToTicks(true);
+	volumeSlide.setPaintTicks(true);
+	volumeSlide.addChangeListener(this);
+	this.getContentPane().add(volumeSlide);
+
+	rateLabel = new JLabel(label.getString("rate"));
+	this.getContentPane().add(rateLabel);
+
+	rateSlide = new JSlider();
+	rateSlide.setName("rateSlide");
+	rateSlide.setMinimum(0);
+	rateSlide.setMaximum(100);
+	rateSlide.setOrientation(JSlider.HORIZONTAL);
+	rateSlide.setMinorTickSpacing(10);
+	rateSlide.setSnapToTicks(true);
+	rateSlide.setPaintTicks(true);
+	rateSlide.addChangeListener(this);
+	this.getContentPane().add(rateSlide);
+
 	pitchLabel = new JLabel(label.getString("pitch"));
 	this.getContentPane().add(pitchLabel);
 
@@ -144,14 +175,8 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	pitchSlide.setMaximum(100);
 	pitchSlide.setOrientation(JSlider.HORIZONTAL);
 	pitchSlide.setMinorTickSpacing(10);
+	pitchSlide.setSnapToTicks(true);
 	pitchSlide.setPaintTicks(true);
-	Hashtable<Integer, JLabel> pitchTable = new Hashtable<Integer, JLabel>();
-	pitchLabelMin = new JLabel(label.getString("pitch.min"));
-	pitchTable.put(Integer.valueOf(0), pitchLabelMin);
-	pitchLabelMax = new JLabel(label.getString("pitch.max"));
-	pitchTable.put(Integer.valueOf(100), pitchLabelMax);
-	pitchSlide.setLabelTable(pitchTable);
-	pitchSlide.setPaintLabels(true);
 	pitchSlide.addChangeListener(this);
 	this.getContentPane().add(pitchSlide);
 
@@ -164,19 +189,13 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	pitchRangeSlide.setMaximum(100);
 	pitchRangeSlide.setOrientation(JSlider.HORIZONTAL);
 	pitchRangeSlide.setMinorTickSpacing(10);
+	pitchRangeSlide.setSnapToTicks(true);
 	pitchRangeSlide.setPaintTicks(true);
-	Hashtable<Integer, JLabel> pitchRangeTable = new Hashtable<Integer, JLabel>();
-	pitchRangeLabelMin = new JLabel(label.getString("pitchRate.min"));
-	pitchRangeTable.put(Integer.valueOf(0), pitchRangeLabelMin);
-	pitchRangeLabelMax = new JLabel(label.getString("pitchRate.max"));
-	pitchRangeTable.put(Integer.valueOf(100), pitchRangeLabelMax);
-	pitchRangeSlide.setLabelTable(pitchRangeTable);
-	pitchRangeSlide.setPaintLabels(true);
 	pitchRangeSlide.addChangeListener(this);
 	this.getContentPane().add(pitchRangeSlide);
 
 	SpringUtilities.makeCompactGrid(this.getContentPane(), // parent
-		4, 2, // rows, cols
+		6, 2, // rows, cols
 		3, 3, // initX, initY
 		5, 5); // xPad, yPad
 
@@ -201,20 +220,31 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
     public void setControlValues(SpeechSynthesizer aSpeechSynthesizer) {
 	setEnabled(true);
 	aSpeechSynthesizer.addSpeechListener(this);
+	aSpeechSynthesizer.addPlayListener(this);
+	
 	List<EngineDesc> engines = aSpeechSynthesizer.listAvailableEngines();
 	displayEngines(engines);
 	EngineDesc engineDesc = aSpeechSynthesizer.getEngineDesc();
 	selectEngine(engineDesc);
 
 	float pitch = aSpeechSynthesizer.getPitch();
-	displayPitch(pitch);
+	pitchSlide.setValue((int) pitch);
 	float pitchRange = aSpeechSynthesizer.getPitchRange();
-	displayPitchRange(pitchRange);
+	pitchRangeSlide.setValue((int) pitchRange);
 
 	List<VoiceDesc> voices = aSpeechSynthesizer.listAvailableVoices();
 	displayVoices(voices);
 	VoiceDesc voiceDesc = aSpeechSynthesizer.getVoiceDesc();
 	selectVoice(voiceDesc);
+	
+	try {
+	    int volume = aSpeechSynthesizer.getVolume();
+	    volumeSlide.setValue(volume);
+	} catch (PlayException e) {}
+	try {
+	    int speed = aSpeechSynthesizer.getSpeed();
+	    rateSlide.setValue(speed);
+	} catch (PlayException e) {}
     }
 
     /**
@@ -226,6 +256,8 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	listVoices.setEnabled(enabled);
 	pitchSlide.setEnabled(enabled);
 	pitchRangeSlide.setEnabled(enabled);
+	volumeSlide.setEnabled(enabled);
+	rateSlide.setEnabled(enabled);
     }
 
     /**
@@ -269,27 +301,11 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
     }
 
     /**
-     * Display the pitch
-     * @param pitch
-     */
-    public void displayPitch(float pitch) {
-	pitchSlide.setValue((int) pitch);
-    }
-
-    /**
-     * Display the pitch range
-     * @param pitchRange
-     */
-    public void displayPitchRange(float pitchRange) {
-	pitchRangeSlide.setValue((int) pitchRange);
-    }
-
-    /**
      * @see org.tramper.synthesizer.SynthesisListener#pitchChanged(org.tramper.synthesizer.SynthesisEvent)
      */
     public void pitchChanged(SynthesisEvent event) {
 	float pitch = event.getPitch();
-	this.displayPitch(pitch);
+	pitchSlide.setValue((int) pitch);
     }
 
     /**
@@ -297,7 +313,7 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
      */
     public void pitchRangeChanged(SynthesisEvent event) {
 	float pitchRange = event.getPitchRange();
-	this.displayPitchRange(pitchRange);
+	pitchRangeSlide.setValue((int) pitchRange);
     }
 
     /**
@@ -392,9 +408,24 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 			synthesizer.setPitchRange(value);
 		    }
 		}
+	    } else if (name.equals("volumeSlide")) {
+		JSlider slider = (JSlider) source;
+		if (!slider.getValueIsAdjusting()) {
+		    int value = slider.getValue();
+		    if (synthesizer != null) {
+			synthesizer.setVolume(value);
+		    }
+		}
+	    } else if (name.equals("rateSlide")) {
+		JSlider slider = (JSlider) source;
+		if (!slider.getValueIsAdjusting()) {
+		    int value = slider.getValue();
+		    if (synthesizer != null) {
+			synthesizer.setSpeed(value);
+		    }
+		}
 	    }
-	} catch (SynthesisException e) {
-	}
+	} catch (SynthesisException e) {}
     }
 
     /**
@@ -432,5 +463,69 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	    }
 	} catch (SynthesisException e) {
 	}
+    }
+
+    @Override
+    public void nextRead(PlayEvent event) {
+    }
+
+    @Override
+    public void previousRead(PlayEvent event) {
+    }
+
+    @Override
+    public void readingEnded(PlayEvent event) {
+    }
+
+    @Override
+    public void readingPaused(PlayEvent event) {
+    }
+
+    @Override
+    public void readingResumed(PlayEvent event) {
+    }
+
+    @Override
+    public void readingStarted(PlayEvent event) {
+    }
+
+    @Override
+    public void readingStopped(PlayEvent event) {
+    }
+
+    @Override
+    public void sampleRateChanged(PlayEvent event) {
+	final long newValue = event.getNewValue();
+	Runnable r = new Runnable() {
+            public void run() {
+        	int currentValue = rateSlide.getValue();
+        	if (currentValue != newValue) {
+        	    rateSlide.setValue((int)newValue);
+        	}
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            r.run();
+        } else {
+            SwingUtilities.invokeLater(r);
+        }
+    }
+
+    @Override
+    public void volumeChanged(PlayEvent event) {
+	final long newValue = event.getNewValue();
+	Runnable r = new Runnable() {
+            public void run() {
+        	int currentValue = volumeSlide.getValue();
+        	if (currentValue != newValue) {
+        	    volumeSlide.setValue((int)newValue);
+        	}
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            r.run();
+        } else {
+            SwingUtilities.invokeLater(r);
+        }
     }
 }

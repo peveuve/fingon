@@ -101,3 +101,5 @@ To switch to TalkingJava, follow these steps:
 Others JSAPI implementations exist but they have not been tested with Fingon.
 A classic JSAPI installation requires to copy speech.properties in the user's home directory (ex: C:\Documents and Settings\Paul-Emile)
 
+
+For more information, see the wiki at http://sourceforge.net/apps/mediawiki/fingon/index.php?title=Main_Page

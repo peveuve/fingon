@@ -24,10 +24,10 @@ public class FingonLookAndFeel extends LookAndFeel {
 	uiDefaults.put("TextAreaUI", "org.fingon.FingonTextAreaUI");
 	uiDefaults.put("TextPaneUI", "org.fingon.FingonTextPaneUI");
 	uiDefaults.put("EditorPaneUI", "org.fingon.FingonEditorPaneUI");
-	UIManager.put("PasswordField.keyTypedSound", getClass().getResource("Menu popup.wav"));
+	UIManager.put("PasswordField.keyTypedSound", getClass().getResource("Menu_popup.wav"));
 	uiDefaults.put("PasswordFieldUI", "org.fingon.FingonPasswordFieldUI");
 	
-	UIManager.put("Button.pressedSound", getClass().getResource("Menu popup.wav"));
+	UIManager.put("Button.pressedSound", getClass().getResource("Menu_popup.wav"));
 	UIManager.put("Button.selectedSound", getClass().getResource("Connect.wav"));
 	UIManager.put("Button.unselectedSound", getClass().getResource("Disconnect.wav"));
 	uiDefaults.put("ButtonUI", "org.fingon.FingonButtonUI");
@@ -39,9 +39,9 @@ public class FingonLookAndFeel extends LookAndFeel {
 	uiDefaults.put("RadioButtonMenuItemUI", "org.fingon.FingonMenuItemUI");
 	uiDefaults.put("CheckBoxMenuItemUI", "org.fingon.FingonMenuItemUI");
 
-	UIManager.put("ProgressBarUI.backgroundMusic", getClass().getResource("Le seigneur des anneaux - Le retour du roi[1]_chapter60-01.mp3"));
+	UIManager.put("ProgressBarUI.backgroundMusic", getClass().getResource("Ground_Control_Human_Space_Pod.mp3"));
 	UIManager.put("ProgressBarUI.intermediateSound", getClass().getResource("Default.wav"));
-	UIManager.put("ProgressBarUI.finalSound", getClass().getResource("new Mail.wav"));
+	UIManager.put("ProgressBarUI.finalSound", getClass().getResource("new_Mail.wav"));
 	uiDefaults.put("ProgressBarUI", "org.fingon.FingonProgressBarUI");
 
 	UIManager.put("OptionPane.informationSound", getClass().getResource("Balloon.wav"));

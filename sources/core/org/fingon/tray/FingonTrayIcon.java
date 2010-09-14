@@ -90,7 +90,7 @@ public class FingonTrayIcon implements ActionListener, SynthesisListener {
 	ImageIcon personIcon = IconFactory.getIconByVoice(voice);
 	Image personImage = personIcon.getImage();
 	
-	Image trayImage = new BufferedImage(flagIcon.getIconWidth(), flagIcon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+	Image trayImage = new BufferedImage(flagIcon.getIconWidth(), flagIcon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 	Graphics trayGraphics = trayImage.getGraphics();
 	trayGraphics.drawImage(flagImage, 0, 0, null);
 	trayGraphics.drawImage(personImage, 0, 4, null);

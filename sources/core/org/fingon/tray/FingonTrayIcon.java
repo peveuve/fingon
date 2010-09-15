@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import java.awt.AWTException;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.SystemTray;
@@ -83,6 +84,9 @@ public class FingonTrayIcon implements ActionListener, SynthesisListener {
     }
     
     private Image drawTrayImage(EngineDesc engine, VoiceDesc voice) {
+        SystemTray tray = SystemTray.getSystemTray();
+        Dimension trayIconSize = tray.getTrayIconSize();
+        
 	Locale locale = engine.getLocale();
 	ImageIcon flagIcon = IconFactory.getFlagIconByLocale(locale);
 	Image flagImage = flagIcon.getImage();
@@ -90,10 +94,15 @@ public class FingonTrayIcon implements ActionListener, SynthesisListener {
 	ImageIcon personIcon = IconFactory.getIconByVoice(voice);
 	Image personImage = personIcon.getImage();
 	
-	Image trayImage = new BufferedImage(flagIcon.getIconWidth(), flagIcon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+	Image trayImage = new BufferedImage(trayIconSize.width, trayIconSize.height, BufferedImage.TYPE_INT_ARGB);
 	Graphics trayGraphics = trayImage.getGraphics();
-	trayGraphics.drawImage(flagImage, 0, 0, null);
-	trayGraphics.drawImage(personImage, 0, 4, null);
+	// center the icons into the tray on the x axis
+	int iconx = (trayIconSize.width - flagIcon.getIconWidth())/2;
+	// draw the flag icon on top of the tray
+	trayGraphics.drawImage(flagImage, iconx, 0, null);
+	// draw the person icon to the bottom of the tray
+	int iconPersony = trayIconSize.height - personIcon.getIconHeight();
+	trayGraphics.drawImage(personImage, iconx, iconPersony, null);
 	trayGraphics.dispose();
 	
 	return trayImage;

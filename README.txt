@@ -37,7 +37,7 @@ It adds some assistive features to the user interface for the visually impaired 
  System requirements
 ------------------------------------------------------------------------------
 
-Fingon requires a Java Runtime Environment (JRE) 1.4 or higher.
+Fingon requires a Java Runtime Environment (JRE) 1.6.
 
 ------------------------------------------------------------------------------
  Installation

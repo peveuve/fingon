@@ -1,16 +1,23 @@
 package org.fingon;
 
 import java.awt.Graphics;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.accessibility.AccessibleContext;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTextUI;
 import javax.swing.text.JTextComponent;
 
+import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
@@ -19,7 +26,7 @@ import org.fingon.synthesizer.SynthesisException;
  * 
  * @author Paul-Emile
  */
-public class FingonTextFieldUI extends BasicTextUI implements KeyListener, CaretListener {
+public class FingonTextFieldUI extends BasicTextUI implements KeyListener, CaretListener, FocusListener {
     protected String typedString = "";
     
     /**
@@ -45,8 +52,13 @@ public class FingonTextFieldUI extends BasicTextUI implements KeyListener, Caret
     public void installUI(JComponent c) {
 	super.installUI(c);
 	JTextComponent textc = (JTextComponent)c;
+	InputMap inputMap = textc.getInputMap();
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonTextFieldUIHelp");
+	ActionMap actionMap = textc.getActionMap();
+	actionMap.put("FingonTextFieldUIHelp", AccessibilityRenderer.getInstance());
 	textc.addKeyListener(this);
 	textc.addCaretListener(this);
+	textc.addFocusListener(this);
     }
     
     /**
@@ -56,8 +68,13 @@ public class FingonTextFieldUI extends BasicTextUI implements KeyListener, Caret
     public void uninstallUI(JComponent c) {
 	super.uninstallUI(c);
 	JTextComponent textc = (JTextComponent)c;
+	InputMap inputMap = textc.getInputMap();
+	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	ActionMap actionMap = textc.getActionMap();
+	actionMap.remove("FingonTextFieldUIHelp");
 	textc.removeKeyListener(this);
 	textc.removeCaretListener(this);
+	textc.removeFocusListener(this);
     }
 
     /**
@@ -108,5 +125,15 @@ public class FingonTextFieldUI extends BasicTextUI implements KeyListener, Caret
     @Override
     protected String getPropertyPrefix() {
 	return "TextField";
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
+	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
     }
 }

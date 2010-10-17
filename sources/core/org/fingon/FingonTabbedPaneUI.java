@@ -2,7 +2,10 @@ package org.fingon;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -10,11 +13,12 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.TabbedPaneUI;
 
+import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
 
-public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener {
+public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener, FocusListener {
     private static FingonTabbedPaneUI instance;
     
     public FingonTabbedPaneUI(JTabbedPane c) {
@@ -39,6 +43,7 @@ public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener {
     public void installUI(JComponent c) {
 	JTabbedPane tabbedPane = (JTabbedPane)c;
 	tabbedPane.addChangeListener(this);
+	tabbedPane.addFocusListener(this);
     }
 
     /**
@@ -48,6 +53,7 @@ public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener {
     public void uninstallUI(JComponent c) {
 	JTabbedPane tabbedPane = (JTabbedPane)c;
 	tabbedPane.removeChangeListener(this);
+	tabbedPane.removeFocusListener(this);
     }
 
     /**
@@ -89,5 +95,15 @@ public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener {
     	    	}
 	    }
 	}
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
+	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
     }
 }

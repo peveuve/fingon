@@ -1,8 +1,11 @@
 package org.fingon;
 
 import java.awt.Graphics;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Dictionary;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
@@ -12,6 +15,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.SliderUI;
 
+import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.player.MIDIPlayer;
 import org.fingon.player.PlayException;
 import org.fingon.player.PlayerFactory;
@@ -19,7 +23,7 @@ import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
 
-public class FingonSliderUI extends SliderUI implements ChangeListener {
+public class FingonSliderUI extends SliderUI implements ChangeListener, FocusListener {
     private MIDIPlayer midiPlayer;
     
     public FingonSliderUI() {
@@ -46,6 +50,7 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
     public void installUI(JComponent c) {
 	JSlider slider = (JSlider)c;
 	slider.addChangeListener(this);
+	slider.addFocusListener(this);
 	Integer instrumentIndex = UIManager.getInt("Slider.instrument");
 	if (midiPlayer != null && instrumentIndex != null) {
 	    midiPlayer.loadInstrument(instrumentIndex);
@@ -59,6 +64,7 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
     public void uninstallUI(JComponent c) {
 	JSlider slider = (JSlider)c;
 	slider.removeChangeListener(this);
+	slider.removeFocusListener(this);
     }
 
     /**
@@ -114,5 +120,15 @@ public class FingonSliderUI extends SliderUI implements ChangeListener {
 		}
 	    }
 	}
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
+	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
     }
 }

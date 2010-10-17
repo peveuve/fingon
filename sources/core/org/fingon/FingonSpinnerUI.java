@@ -1,9 +1,12 @@
 package org.fingon;
 
 import java.awt.Graphics;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.text.DateFormat;
 import java.util.Date;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
@@ -11,6 +14,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.SpinnerUI;
 
+import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
@@ -19,7 +23,7 @@ import org.fingon.synthesizer.SynthesisException;
  * 
  * @author Paul-Emile
  */
-public class FingonSpinnerUI extends SpinnerUI implements ChangeListener {
+public class FingonSpinnerUI extends SpinnerUI implements ChangeListener, FocusListener {
 
     /** the instance common to every component */
     private static FingonSpinnerUI instance;
@@ -43,6 +47,7 @@ public class FingonSpinnerUI extends SpinnerUI implements ChangeListener {
     public void installUI(JComponent c) {
 	JSpinner spinner = (JSpinner)c;
 	spinner.addChangeListener(this);
+	spinner.addFocusListener(this);
     }
 
     /**
@@ -52,6 +57,7 @@ public class FingonSpinnerUI extends SpinnerUI implements ChangeListener {
     public void uninstallUI(JComponent c) {
 	JSpinner spinner = (JSpinner)c;
 	spinner.removeChangeListener(this);
+	spinner.removeFocusListener(this);
     }
 
     /**
@@ -77,5 +83,15 @@ public class FingonSpinnerUI extends SpinnerUI implements ChangeListener {
 	    synthesizer.stop();
 	    synthesizer.play(text);
 	} catch (SynthesisException e1) {}
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
+	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
     }
 }

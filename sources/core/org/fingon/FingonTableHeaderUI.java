@@ -1,9 +1,12 @@
 package org.fingon;
 
 import java.awt.Graphics;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -15,11 +18,12 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
 
-public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnModelListener {
+public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnModelListener, FocusListener {
     private static FingonTableHeaderUI instance;
     
     public FingonTableHeaderUI(JTableHeader c) {
@@ -43,6 +47,7 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
     @Override
     public void installUI(JComponent c) {
 	JTableHeader tableHeader = (JTableHeader)c;
+	tableHeader.addFocusListener(this);
 	TableColumnModel columnModel = tableHeader.getColumnModel();
 	if (columnModel != null) {
 	    columnModel.addColumnModelListener(this);
@@ -55,6 +60,7 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
     @Override
     public void uninstallUI(JComponent c) {
 	JTableHeader tableHeader = (JTableHeader)c;
+	tableHeader.removeFocusListener(this);
 	TableColumnModel columnModel = tableHeader.getColumnModel();
 	if (columnModel != null) {
 	    columnModel.removeColumnModelListener(this);
@@ -143,5 +149,15 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
 
     @Override
     public void columnSelectionChanged(ListSelectionEvent e) {
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
+	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
     }
 }

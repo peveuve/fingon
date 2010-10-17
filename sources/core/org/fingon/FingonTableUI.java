@@ -1,7 +1,10 @@
 package org.fingon;
 
 import java.awt.Graphics;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -11,11 +14,12 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.TableUI;
 import javax.swing.table.TableModel;
 
+import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
 
-public class FingonTableUI extends TableUI implements ListSelectionListener {
+public class FingonTableUI extends TableUI implements ListSelectionListener, FocusListener {
 
     private JTable table;
     
@@ -38,6 +42,7 @@ public class FingonTableUI extends TableUI implements ListSelectionListener {
     @Override
     public void installUI(JComponent c) {
 	JTable table = (JTable)c;
+	table.addFocusListener(this);
 	ListSelectionModel selectionModel = table.getSelectionModel();
 	if (selectionModel != null) {
 	    selectionModel.addListSelectionListener(this);
@@ -50,6 +55,7 @@ public class FingonTableUI extends TableUI implements ListSelectionListener {
     @Override
     public void uninstallUI(JComponent c) {
 	JTable table = (JTable)c;
+	table.removeFocusListener(this);
 	ListSelectionModel selectionModel = table.getSelectionModel();
 	if (selectionModel != null) {
 	    selectionModel.removeListSelectionListener(this);
@@ -89,5 +95,15 @@ public class FingonTableUI extends TableUI implements ListSelectionListener {
     	    	}
 	    }
 	}
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
+	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
     }
 }

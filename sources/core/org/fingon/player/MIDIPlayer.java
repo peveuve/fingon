@@ -62,9 +62,11 @@ public class MIDIPlayer implements Player {
     
     public void loadInstrument(int instrumentIndex) {
         Instrument[] instruments = synthesizer.getAvailableInstruments();
-        boolean loaded = synthesizer.loadInstrument(instruments[instrumentIndex]);
-        if (loaded) {
-            channel.programChange(instrumentIndex);
+        if (instrumentIndex < instruments.length) {
+            boolean loaded = synthesizer.loadInstrument(instruments[instrumentIndex]);
+            if (loaded) {
+        	channel.programChange(instrumentIndex);
+            }
         }
     }
     

@@ -2,12 +2,15 @@ package org.fingon;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.UIManager;
@@ -22,6 +25,7 @@ import javax.swing.plaf.TreeUI;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.player.PlayException;
 import org.fingon.player.PlayerFactory;
 import org.fingon.player.SoundPlayer;
@@ -33,7 +37,7 @@ import org.fingon.synthesizer.SynthesisException;
  * @author Paul-Emile
  * 
  */
-public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeExpansionListener, TreeModelListener, PropertyChangeListener {
+public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeExpansionListener, TreeModelListener, PropertyChangeListener, FocusListener {
     /** the instance common to every component */
     private static FingonTreeUI instance;
     /** expanded sound URL */
@@ -62,6 +66,7 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 	tree.addTreeSelectionListener(this);
 	tree.addTreeExpansionListener(this);
 	tree.addPropertyChangeListener(this);
+	tree.addFocusListener(this);
 	TreeModel treeModel = tree.getModel();
 	if (treeModel != null) {
 	    treeModel.addTreeModelListener(this);
@@ -79,6 +84,7 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 	tree.removeTreeSelectionListener(this);
 	tree.removeTreeExpansionListener(this);
 	tree.removePropertyChangeListener(this);
+	tree.removeFocusListener(this);
 	TreeModel treeModel = tree.getModel();
 	if (treeModel != null) {
 	    treeModel.removeTreeModelListener(this);
@@ -326,5 +332,15 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 		oldTreeModel.removeTreeModelListener(this);
 	    }
 	}
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
+	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
     }
 }

@@ -3,16 +3,24 @@ package org.fingon;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.net.URL;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.AbstractButton;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.plaf.ButtonUI;
 import javax.swing.plaf.ComponentUI;
 
+import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.player.PlayException;
 import org.fingon.player.PlayerFactory;
 import org.fingon.player.SoundPlayer;
@@ -24,7 +32,7 @@ import org.fingon.synthesizer.SynthesisException;
  * 
  * @author Paul-Emile
  */
-public class FingonButtonUI extends ButtonUI implements ActionListener, ItemListener {
+public class FingonButtonUI extends ButtonUI implements ActionListener, ItemListener, FocusListener {
     /** the instance common to every component */
     private static FingonButtonUI instance;
     /** selected sound URL */
@@ -40,8 +48,13 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
     @Override
     public void installUI(JComponent c) {
 	AbstractButton button = (AbstractButton)c;
+	InputMap inputMap = button.getInputMap();
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonButtonUIHelp");
+	ActionMap actionMap = button.getActionMap();
+	actionMap.put("FingonButtonUIHelp", AccessibilityRenderer.getInstance());
 	button.addActionListener(this);
 	button.addItemListener(this);
+	button.addFocusListener(this);
 	pressedSound = (URL)UIManager.get("Button.pressedSound");
 	selectedSound = (URL)UIManager.get("Button.selectedSound");
 	unselectedSound = (URL)UIManager.get("Button.unselectedSound");
@@ -53,8 +66,13 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
     @Override
     public void uninstallUI(JComponent c) {
 	AbstractButton button = (AbstractButton)c;
+	InputMap inputMap = button.getInputMap();
+	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	ActionMap actionMap = button.getActionMap();
+	actionMap.remove("FingonButtonUIHelp");
 	button.removeActionListener(this);
 	button.removeItemListener(this);
+	button.removeFocusListener(this);
     }
 
     /**
@@ -113,5 +131,15 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
 		}
 	    } catch (PlayException e1) {}
 	}
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
+	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
     }
 }

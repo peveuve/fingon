@@ -1,16 +1,20 @@
 package org.fingon;
 
 import java.awt.Graphics;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.URL;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTextFieldUI;
 
+import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.player.PlayException;
 import org.fingon.player.Player;
 import org.fingon.player.PlayerFactory;
@@ -19,7 +23,7 @@ import org.fingon.player.PlayerFactory;
  * 
  * @author Paul-Emile
  */
-public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListener {
+public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListener, FocusListener {
     /** key typed sound URL */
     private URL keyTypedSound;
 
@@ -48,6 +52,7 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
 	keyTypedSound = (URL)UIManager.get("PasswordField.keyTypedSound");
 	JPasswordField textc = (JPasswordField)c;
 	textc.addKeyListener(this);
+	textc.addFocusListener(this);
     }
     
     /**
@@ -58,6 +63,7 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
 	super.uninstallUI(c);
 	JPasswordField textc = (JPasswordField)c;
 	textc.removeKeyListener(this);
+	textc.removeFocusListener(this);
     }
 
     /**
@@ -85,5 +91,15 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
 		player.play(keyTypedSound);
 	    } catch (PlayException e) {}
 	}
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
+	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
     }
 }

@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
@@ -11,8 +12,11 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.accessibility.AccessibleContext;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -63,6 +67,10 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
     @Override
     public void installUI(JComponent c) {
 	JTree tree = (JTree)c;
+	InputMap inputMap = tree.getInputMap();
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	ActionMap actionMap = tree.getActionMap();
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	tree.addTreeSelectionListener(this);
 	tree.addTreeExpansionListener(this);
 	tree.addPropertyChangeListener(this);
@@ -81,6 +89,10 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
     @Override
     public void uninstallUI(JComponent c) {
 	JTree tree = (JTree)c;
+	InputMap inputMap = tree.getInputMap();
+	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	ActionMap actionMap = tree.getActionMap();
+	actionMap.remove("FingonUIHelp");
 	tree.removeTreeSelectionListener(this);
 	tree.removeTreeExpansionListener(this);
 	tree.removePropertyChangeListener(this);

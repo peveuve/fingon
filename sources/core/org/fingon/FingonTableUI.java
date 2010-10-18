@@ -3,10 +3,14 @@ package org.fingon;
 import java.awt.Graphics;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 
 import javax.accessibility.AccessibleContext;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -42,6 +46,10 @@ public class FingonTableUI extends TableUI implements ListSelectionListener, Foc
     @Override
     public void installUI(JComponent c) {
 	JTable table = (JTable)c;
+	InputMap inputMap = table.getInputMap();
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	ActionMap actionMap = table.getActionMap();
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	table.addFocusListener(this);
 	ListSelectionModel selectionModel = table.getSelectionModel();
 	if (selectionModel != null) {
@@ -55,6 +63,10 @@ public class FingonTableUI extends TableUI implements ListSelectionListener, Foc
     @Override
     public void uninstallUI(JComponent c) {
 	JTable table = (JTable)c;
+	InputMap inputMap = table.getInputMap();
+	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	ActionMap actionMap = table.getActionMap();
+	actionMap.remove("FingonUIHelp");
 	table.removeFocusListener(this);
 	ListSelectionModel selectionModel = table.getSelectionModel();
 	if (selectionModel != null) {

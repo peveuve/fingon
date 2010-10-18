@@ -2,11 +2,14 @@ package org.fingon.accessibility;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.accessibility.AccessibleContext;
+import javax.accessibility.AccessibleIcon;
 import javax.accessibility.AccessibleRole;
 import javax.accessibility.AccessibleState;
 import javax.swing.AbstractAction;
@@ -45,17 +48,32 @@ public class AccessibilityRenderer extends AbstractAction {
 	if (name == null) {
 	    name = "";
 	}
+	StringBuilder iconsDesc = new StringBuilder("");
+	AccessibleIcon[] icons = accessCtxt.getAccessibleIcon();
+	if (icons != null) {
+	    for (AccessibleIcon icon : icons) {
+		String iconDesc = icon.getAccessibleIconDescription();
+		try {
+		    new URL(iconDesc);
+		} catch (MalformedURLException ex) {
+		    // only say the description if it is not an URL (the default?)
+	    	    iconsDesc.append(iconDesc);
+	    	    iconsDesc.append(" ");
+		}
+	    }
+	}
+	
 	AccessibleRole role = accessCtxt.getAccessibleRole();
 	AccessibleState[] accessStates = accessCtxt.getAccessibleStateSet().toArray();
 	StringBuilder states = new StringBuilder("");
-		
+	
 	try {
 	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
 	    Locale locale = synthe.getEngineLocale();
-		    
+	    
 	    ResourceBundle label = ResourceBundle.getBundle("message", locale);
 	    MessageFormat msg = new MessageFormat(label.getString("accessible"));
-	    String[] msgArgs = new String[3];
+	    String[] msgArgs = new String[4];
 	    msgArgs[0] = name;
 	    msgArgs[1] = role.toDisplayString(locale);
 	    for (AccessibleState state : accessStates) {
@@ -78,11 +96,12 @@ public class AccessibilityRenderer extends AbstractAction {
 		}
 	    }
 	    msgArgs[2] = states.toString();
+	    msgArgs[3] = iconsDesc.toString();
 	    String formatedMsg = msg.format(msgArgs);
 	    synthe.play(formatedMsg);
 	} catch (SynthesisException e) {}
     }
-
+    
     public void renderHelp(AccessibleContext accessCtxt) {	
     	String desc = accessCtxt.getAccessibleDescription();
     	if (desc != null) {

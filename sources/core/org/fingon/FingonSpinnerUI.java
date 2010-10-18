@@ -3,12 +3,16 @@ package org.fingon;
 import java.awt.Graphics;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.text.DateFormat;
 import java.util.Date;
 
 import javax.accessibility.AccessibleContext;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ComponentUI;
@@ -46,6 +50,10 @@ public class FingonSpinnerUI extends SpinnerUI implements ChangeListener, FocusL
     @Override
     public void installUI(JComponent c) {
 	JSpinner spinner = (JSpinner)c;
+	InputMap inputMap = spinner.getInputMap();
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	ActionMap actionMap = spinner.getActionMap();
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	spinner.addChangeListener(this);
 	spinner.addFocusListener(this);
     }
@@ -56,6 +64,10 @@ public class FingonSpinnerUI extends SpinnerUI implements ChangeListener, FocusL
     @Override
     public void uninstallUI(JComponent c) {
 	JSpinner spinner = (JSpinner)c;
+	InputMap inputMap = spinner.getInputMap();
+	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	ActionMap actionMap = spinner.getActionMap();
+	actionMap.remove("FingonUIHelp");
 	spinner.removeChangeListener(this);
 	spinner.removeFocusListener(this);
     }

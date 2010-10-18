@@ -1,16 +1,21 @@
 package org.fingon;
 
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.net.URL;
 
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
 
+import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.player.PlayException;
 import org.fingon.player.PlayerFactory;
 import org.fingon.player.SoundPlayer;
@@ -40,6 +45,10 @@ public class FingonOptionPaneUI extends BasicOptionPaneUI implements AncestorLis
     @Override
     public void installUI(JComponent c) {
 	JOptionPane optionPane = (JOptionPane)c;
+	InputMap inputMap = optionPane.getInputMap();
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	ActionMap actionMap = optionPane.getActionMap();
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	optionPane.addAncestorListener(this);
 	this.installDefaults();
     }
@@ -61,6 +70,10 @@ public class FingonOptionPaneUI extends BasicOptionPaneUI implements AncestorLis
     @Override
     public void uninstallUI(JComponent c) {
 	JOptionPane optionPane = (JOptionPane)c;
+	InputMap inputMap = optionPane.getInputMap();
+	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	ActionMap actionMap = optionPane.getActionMap();
+	actionMap.remove("FingonUIHelp");
 	optionPane.removeAncestorListener(this);
     }
 

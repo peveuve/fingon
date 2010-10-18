@@ -3,12 +3,16 @@ package org.fingon;
 import java.awt.Graphics;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.util.Dictionary;
 
 import javax.accessibility.AccessibleContext;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -49,6 +53,10 @@ public class FingonSliderUI extends SliderUI implements ChangeListener, FocusLis
     @Override
     public void installUI(JComponent c) {
 	JSlider slider = (JSlider)c;
+	InputMap inputMap = slider.getInputMap();
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	ActionMap actionMap = slider.getActionMap();
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	slider.addChangeListener(this);
 	slider.addFocusListener(this);
 	Integer instrumentIndex = UIManager.getInt("Slider.instrument");
@@ -63,6 +71,10 @@ public class FingonSliderUI extends SliderUI implements ChangeListener, FocusLis
     @Override
     public void uninstallUI(JComponent c) {
 	JSlider slider = (JSlider)c;
+	InputMap inputMap = slider.getInputMap();
+	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	ActionMap actionMap = slider.getActionMap();
+	actionMap.remove("FingonUIHelp");
 	slider.removeChangeListener(this);
 	slider.removeFocusListener(this);
     }

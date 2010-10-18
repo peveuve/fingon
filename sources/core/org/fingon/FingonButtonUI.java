@@ -49,9 +49,9 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
     public void installUI(JComponent c) {
 	AbstractButton button = (AbstractButton)c;
 	InputMap inputMap = button.getInputMap();
-	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonButtonUIHelp");
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
 	ActionMap actionMap = button.getActionMap();
-	actionMap.put("FingonButtonUIHelp", AccessibilityRenderer.getInstance());
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	button.addActionListener(this);
 	button.addItemListener(this);
 	button.addFocusListener(this);
@@ -69,7 +69,7 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
 	InputMap inputMap = button.getInputMap();
 	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 	ActionMap actionMap = button.getActionMap();
-	actionMap.remove("FingonButtonUIHelp");
+	actionMap.remove("FingonUIHelp");
 	button.removeActionListener(this);
 	button.removeItemListener(this);
 	button.removeFocusListener(this);

@@ -20,7 +20,7 @@ It adds some assistive features to the user interface for the visually impaired 
 * button: says the label or emits a sound once the button is actioned.
 * toggle button / radio button / checkbox: emits a different sound when the button is selected or unselected.
 * menu item: says the label of the menu item when the mouse hovers it. Plays a sound if actioned.
-* combobox: says the item hovered in the list, emits a sound when the button popping up the list is actioned.
+* combobox: says the item hovered in the list, emits a sound when the button popping up the list is actioned, says the item selected or typed.
 * list: says the label of the selected item.
 * tree: says the label of the selected node. Emits a different sound when a node is expanded or collapsed. Says a node was added or removed from a parent node.
 * progress bar: plays a music when a progress bar is running in indeterminate state. Otherwise plays a sound each time the bar progresses, and a particular sound when the progression ends. If a string is displayed or updated in the progress bar, says it.

@@ -5,10 +5,14 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 
 import javax.accessibility.AccessibleContext;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.ComponentUI;
@@ -45,6 +49,10 @@ public class FingonListUI extends ListUI implements ListSelectionListener, Focus
     @Override
     public void installUI(JComponent c) {
 	JList list = (JList)c;
+	InputMap inputMap = list.getInputMap();
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	ActionMap actionMap = list.getActionMap();
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	list.addListSelectionListener(this);
 	list.addFocusListener(this);
     }
@@ -55,6 +63,10 @@ public class FingonListUI extends ListUI implements ListSelectionListener, Focus
     @Override
     public void uninstallUI(JComponent c) {
 	JList list = (JList)c;
+	InputMap inputMap = list.getInputMap();
+	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	ActionMap actionMap = list.getActionMap();
+	actionMap.remove("FingonUIHelp");
 	list.removeListSelectionListener(this);
 	list.removeFocusListener(this);
     }

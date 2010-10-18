@@ -3,11 +3,15 @@ package org.fingon;
 import java.awt.Graphics;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.accessibility.AccessibleContext;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -47,6 +51,10 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
     @Override
     public void installUI(JComponent c) {
 	JTableHeader tableHeader = (JTableHeader)c;
+	InputMap inputMap = tableHeader.getInputMap();
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	ActionMap actionMap = tableHeader.getActionMap();
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	tableHeader.addFocusListener(this);
 	TableColumnModel columnModel = tableHeader.getColumnModel();
 	if (columnModel != null) {
@@ -60,6 +68,10 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
     @Override
     public void uninstallUI(JComponent c) {
 	JTableHeader tableHeader = (JTableHeader)c;
+	InputMap inputMap = tableHeader.getInputMap();
+	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	ActionMap actionMap = tableHeader.getActionMap();
+	actionMap.remove("FingonUIHelp");
 	tableHeader.removeFocusListener(this);
 	TableColumnModel columnModel = tableHeader.getColumnModel();
 	if (columnModel != null) {

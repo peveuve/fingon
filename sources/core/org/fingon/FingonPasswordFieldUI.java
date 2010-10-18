@@ -8,8 +8,11 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 import javax.accessibility.AccessibleContext;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTextFieldUI;
@@ -51,6 +54,10 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
 	super.installUI(c);
 	keyTypedSound = (URL)UIManager.get("PasswordField.keyTypedSound");
 	JPasswordField textc = (JPasswordField)c;
+	InputMap inputMap = textc.getInputMap();
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	ActionMap actionMap = textc.getActionMap();
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	textc.addKeyListener(this);
 	textc.addFocusListener(this);
     }
@@ -62,6 +69,10 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
     public void uninstallUI(JComponent c) {
 	super.uninstallUI(c);
 	JPasswordField textc = (JPasswordField)c;
+	InputMap inputMap = textc.getInputMap();
+	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	ActionMap actionMap = textc.getActionMap();
+	actionMap.remove("FingonUIHelp");
 	textc.removeKeyListener(this);
 	textc.removeFocusListener(this);
     }

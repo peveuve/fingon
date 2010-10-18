@@ -4,10 +4,14 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 
 import javax.accessibility.AccessibleContext;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ComponentUI;
@@ -42,6 +46,10 @@ public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener, 
     @Override
     public void installUI(JComponent c) {
 	JTabbedPane tabbedPane = (JTabbedPane)c;
+	InputMap inputMap = tabbedPane.getInputMap();
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	ActionMap actionMap = tabbedPane.getActionMap();
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	tabbedPane.addChangeListener(this);
 	tabbedPane.addFocusListener(this);
     }
@@ -52,6 +60,10 @@ public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener, 
     @Override
     public void uninstallUI(JComponent c) {
 	JTabbedPane tabbedPane = (JTabbedPane)c;
+	InputMap inputMap = tabbedPane.getInputMap();
+	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	ActionMap actionMap = tabbedPane.getActionMap();
+	actionMap.remove("FingonUIHelp");
 	tabbedPane.removeChangeListener(this);
 	tabbedPane.removeFocusListener(this);
     }

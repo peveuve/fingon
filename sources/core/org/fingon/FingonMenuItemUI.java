@@ -3,9 +3,14 @@ package org.fingon;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
+import javax.accessibility.AccessibleContext;
+import javax.accessibility.AccessibleState;
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 import javax.swing.plaf.ComponentUI;
 
 import org.fingon.player.PlayException;
@@ -19,10 +24,13 @@ import org.fingon.synthesizer.SynthesisException;
  * 
  * @author Paul-Emile
  */
-public class FingonMenuItemUI extends FingonButtonUI implements MouseListener {
-    /** the instance common to every component */
-    private static FingonMenuItemUI instance;
+public class FingonMenuItemUI extends FingonButtonUI implements MouseListener, PropertyChangeListener {
+    private JMenuItem menuItem;
 
+    public FingonMenuItemUI() {
+	super();
+    }
+    
     /**
      * 
      * @see org.fingon.FingonButtonUI#installUI(javax.swing.JComponent)
@@ -30,8 +38,9 @@ public class FingonMenuItemUI extends FingonButtonUI implements MouseListener {
     @Override
     public void installUI(JComponent c) {
 	super.installUI(c);
-	AbstractButton button = (AbstractButton)c;
-	button.addMouseListener(this);
+	menuItem = (JMenuItem)c;
+	menuItem.getAccessibleContext().addPropertyChangeListener(this);
+	//button.addMouseListener(this);
     }
 
     /**
@@ -41,8 +50,9 @@ public class FingonMenuItemUI extends FingonButtonUI implements MouseListener {
     @Override
     public void uninstallUI(JComponent c) {
 	super.uninstallUI(c);
-	AbstractButton button = (AbstractButton)c;
-	button.removeMouseListener(this);
+	menuItem = (JMenuItem)c;
+	menuItem.getAccessibleContext().removePropertyChangeListener(this);
+	//button.removeMouseListener(this);
     }
 
     /**
@@ -51,10 +61,7 @@ public class FingonMenuItemUI extends FingonButtonUI implements MouseListener {
      * @return
      */
     public static ComponentUI createUI(JComponent c) {
-	if (instance == null) {
-	    instance = new FingonMenuItemUI();
-	}
-	return instance;
+	return new FingonMenuItemUI();
     }
     
     /**
@@ -120,5 +127,22 @@ public class FingonMenuItemUI extends FingonButtonUI implements MouseListener {
      * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
      */
     public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+	if (evt.getPropertyName().equals(AccessibleContext.ACCESSIBLE_STATE_PROPERTY)) {
+	    Object newValue = evt.getNewValue();
+	    if (AccessibleState.FOCUSED.equals(newValue)) {
+		String text = menuItem.getText();
+		if (text != null && !text.equals("")) {
+		    try {
+			SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+		        synthesizer.stop();
+		        synthesizer.play(text);
+		    } catch (SynthesisException e1) {}
+		}
+	    }
+	}
     }
 }

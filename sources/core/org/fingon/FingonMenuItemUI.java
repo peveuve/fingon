@@ -3,12 +3,14 @@ package org.fingon;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.URL;
 
 import javax.accessibility.AccessibleContext;
 import javax.accessibility.AccessibleState;
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
+import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 
 import org.fingon.player.PlayException;
@@ -68,6 +70,10 @@ public class FingonMenuItemUI extends FingonButtonUI implements PropertyChangeLi
     public void actionPerformed(ActionEvent e) {
 	AbstractButton button = (AbstractButton)e.getSource();
 	if (button.isShowing()) {
+	    URL pressedSound = (URL)button.getClientProperty("pressedSound");
+	    if (pressedSound == null) {
+		pressedSound = (URL)UIManager.get("Button.pressedSound");
+	    }
 	    if (pressedSound != null) {
 		try {
 		    SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");

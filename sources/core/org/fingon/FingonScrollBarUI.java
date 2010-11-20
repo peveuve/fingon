@@ -23,6 +23,7 @@ import org.fingon.player.PlayerFactory;
  */
 public class FingonScrollBarUI extends ScrollBarUI implements ChangeListener, PropertyChangeListener {
     private MIDIPlayer midiPlayer;
+    private JScrollBar scrollBar;
     
     public FingonScrollBarUI() {
 	try {
@@ -46,12 +47,15 @@ public class FingonScrollBarUI extends ScrollBarUI implements ChangeListener, Pr
      */
     @Override
     public void installUI(JComponent c) {
-	JScrollBar scrollBar = (JScrollBar)c;
+	scrollBar = (JScrollBar)c;
 	BoundedRangeModel model = scrollBar.getModel();
 	model.addChangeListener(this);
 	scrollBar.addPropertyChangeListener(this);
-	Integer instrumentIndex = UIManager.getInt("ScrollBar.instrument");
-	if (midiPlayer != null) {
+	Integer instrumentIndex = (Integer)scrollBar.getClientProperty("instrument");
+	if (instrumentIndex == null) {
+	    instrumentIndex = UIManager.getInt("ScrollBar.instrument");
+	}
+	if (midiPlayer != null && instrumentIndex != null) {
 	    midiPlayer.loadInstrument(instrumentIndex);
 	}
     }
@@ -83,7 +87,6 @@ public class FingonScrollBarUI extends ScrollBarUI implements ChangeListener, Pr
 	    int maxValue = model.getMaximum();
 	    if (maxValue != 0) {
 		final int value = currentValue*127/maxValue;
-		
 		if (adjusting) {
 		    final int velocity = 64;
 		    Runnable runnable = new Runnable() {
@@ -117,6 +120,11 @@ public class FingonScrollBarUI extends ScrollBarUI implements ChangeListener, Pr
 	    BoundedRangeModel oldModel = (BoundedRangeModel)evt.getOldValue();
 	    if (oldModel != null) {
 		oldModel.removeChangeListener(this);
+	    }
+	} else if (propertyName.equals("instrument")) {
+	    Integer instrumentIndex = (Integer)scrollBar.getClientProperty("instrument");
+	    if (midiPlayer != null && instrumentIndex != null) {
+		midiPlayer.loadInstrument(instrumentIndex);
 	    }
 	}
     }

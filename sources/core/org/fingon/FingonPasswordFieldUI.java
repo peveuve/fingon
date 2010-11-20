@@ -27,9 +27,8 @@ import org.fingon.player.PlayerFactory;
  * @author Paul-Emile
  */
 public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListener, FocusListener {
-    /** key typed sound URL */
-    private URL keyTypedSound;
-
+    private static FingonPasswordFieldUI instance;
+    
     /**
      * 
      */
@@ -43,7 +42,10 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
      * @return
      */
     public static ComponentUI createUI(JComponent c) {
-	return new FingonPasswordFieldUI();
+	if (instance == null) {
+	    instance = new FingonPasswordFieldUI();
+	}
+	return instance;
     }
     
     /**
@@ -52,7 +54,6 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
     @Override
     public void installUI(JComponent c) {
 	super.installUI(c);
-	keyTypedSound = (URL)UIManager.get("PasswordField.keyTypedSound");
 	JPasswordField textc = (JPasswordField)c;
 	InputMap inputMap = textc.getInputMap();
 	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
@@ -95,7 +96,12 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
     }
 
     @Override
-    public void keyTyped(KeyEvent arg0) {
+    public void keyTyped(KeyEvent evt) {
+	JPasswordField passwordField = (JPasswordField)evt.getSource();
+	URL keyTypedSound = (URL)passwordField.getClientProperty("keyTypedSound");
+	if (keyTypedSound == null) {
+	    keyTypedSound = (URL)UIManager.get("PasswordField.keyTypedSound");
+	}
 	if (keyTypedSound != null) {
 	    try {
 		Player player = PlayerFactory.getPlayerByExtension("wav");

@@ -59,10 +59,6 @@ public class FingonSliderUI extends SliderUI implements ChangeListener, FocusLis
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	slider.addChangeListener(this);
 	slider.addFocusListener(this);
-	Integer instrumentIndex = UIManager.getInt("Slider.instrument");
-	if (midiPlayer != null && instrumentIndex != null) {
-	    midiPlayer.loadInstrument(instrumentIndex);
-	}
     }
 
     /**
@@ -117,6 +113,13 @@ public class FingonSliderUI extends SliderUI implements ChangeListener, FocusLis
 		int maxValue = slider.getMaximum();
 		final int value = currentValue*127/maxValue;
 		final int velocity = volume;
+		Integer instrumentIndex = (Integer)slider.getClientProperty("instrument");
+		if (instrumentIndex == null) {
+		    instrumentIndex = UIManager.getInt("Slider.instrument");
+		}
+		if (midiPlayer != null && instrumentIndex != null) {
+		    midiPlayer.loadInstrument(instrumentIndex);
+		}
 		if (midiPlayer != null) {
 		    Runnable runnable = new Runnable() {
 			@Override

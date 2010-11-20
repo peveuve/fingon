@@ -44,10 +44,6 @@ import org.fingon.synthesizer.SynthesisException;
 public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeExpansionListener, TreeModelListener, PropertyChangeListener, FocusListener {
     /** the instance common to every component */
     private static FingonTreeUI instance;
-    /** expanded sound URL */
-    private URL expandedSound;
-    /** collapsed sound URL */
-    private URL collapsedSound;
 
     /**
      * Returns the instance of UI
@@ -79,8 +75,6 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 	if (treeModel != null) {
 	    treeModel.addTreeModelListener(this);
 	}
-	expandedSound = (URL)UIManager.get("Tree.expandedSound");
-	collapsedSound = (URL)UIManager.get("Tree.collapsedSound");
     }
 
     /**
@@ -211,6 +205,10 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
     public void treeCollapsed(TreeExpansionEvent event) {
 	JTree tree = (JTree)event.getSource();
 	if (tree.isShowing()) {
+	    URL collapsedSound = (URL)tree.getClientProperty("collapsedSound");
+	    if (collapsedSound == null) {
+		collapsedSound = (URL)UIManager.get("Tree.collapsedSound");
+	    }
 	    if (collapsedSound != null) {
     	    	try {
     	    	    SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
@@ -227,6 +225,10 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
     public void treeExpanded(TreeExpansionEvent event) {
 	JTree tree = (JTree)event.getSource();
 	if (tree.isShowing()) {
+	    URL expandedSound = (URL)tree.getClientProperty("expandedSound");
+	    if (expandedSound == null) {
+		expandedSound = (URL)UIManager.get("Tree.expandedSound");
+	    }
 	    if (expandedSound != null) {
     	    	try {
     	    	    SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");

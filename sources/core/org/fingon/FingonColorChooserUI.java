@@ -3,6 +3,8 @@ package org.fingon;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -27,7 +29,7 @@ import org.fingon.synthesizer.SynthesisException;
  * 
  * @author Paul-Emile
  */
-public class FingonColorChooserUI extends ColorChooserUI implements ChangeListener {
+public class FingonColorChooserUI extends ColorChooserUI implements ChangeListener, PropertyChangeListener {
     private static FingonColorChooserUI instance;
 
     /**
@@ -56,6 +58,7 @@ public class FingonColorChooserUI extends ColorChooserUI implements ChangeListen
 	if (colorModel != null) {
 	    colorModel.addChangeListener(this);
 	}
+	colorChooser.addPropertyChangeListener(this);
     }
 
     /**
@@ -72,6 +75,7 @@ public class FingonColorChooserUI extends ColorChooserUI implements ChangeListen
 	if (colorModel != null) {
 	    colorModel.removeChangeListener(this);
 	}
+	colorChooser.removePropertyChangeListener(this);
     }
 
     /**
@@ -144,5 +148,20 @@ public class FingonColorChooserUI extends ColorChooserUI implements ChangeListen
 	    synthesizer.stop();
 	    synthesizer.play(text);
 	} catch (SynthesisException e1) {}
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+	String propertyName = evt.getPropertyName();
+	if (propertyName.equals(JColorChooser.SELECTION_MODEL_PROPERTY)) {
+	    ColorSelectionModel newModel = (ColorSelectionModel)evt.getNewValue();
+	    if (newModel != null) {
+		newModel.addChangeListener(this);
+	    }
+	    ColorSelectionModel oldModel = (ColorSelectionModel)evt.getOldValue();
+	    if (oldModel != null) {
+		oldModel.removeChangeListener(this);
+	    }
+	}
     }
 }

@@ -132,6 +132,7 @@ public class FingonOptionPaneUI extends BasicOptionPaneUI implements AncestorLis
         try {
             SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
             synthesizer.stop();
+            synthesizer.load(optionPane.getLocale());
             synthesizer.play(message);
 	} catch (SynthesisException e1) {}
     }

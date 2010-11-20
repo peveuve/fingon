@@ -106,6 +106,7 @@ public class FingonListUI extends ListUI implements ListSelectionListener, Focus
     	    	    try {
     	    		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
         	    	synthesizer.stop();
+        	    	synthesizer.load(changedList.getLocale());
         	    	for (Object value : selectedValues) {
         	    	    synthesizer.play(value.toString());
         	    	}

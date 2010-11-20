@@ -104,6 +104,7 @@ public class FingonComboBoxUI extends ComboBoxUI implements FocusListener, Actio
 	    try {
 	        SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
 	        synthesizer.stop();
+	        synthesizer.load(comboBox.getLocale());
     	        synthesizer.play(selectedItem.toString());
 	    } catch (SynthesisException ex) {}
 	}

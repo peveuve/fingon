@@ -59,11 +59,13 @@ public class FingonToolTipUI extends ToolTipUI implements AncestorListener {
     }
 
     public void ancestorAdded(AncestorEvent event) {
-	String tipText = ((JToolTip)event.getComponent()).getTipText();
+	JToolTip tooltip = (JToolTip)event.getComponent();
+	String tipText = tooltip.getTipText();
 	if (tipText != null) {
 	    try {
 		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
 		synthesizer.stop();
+		synthesizer.load(tooltip.getLocale());
 		synthesizer.play(tipText);
 	    } catch (SynthesisException e1) {}
 	}

@@ -96,6 +96,7 @@ public class FingonTextFieldUI extends BasicTextUI implements KeyListener, Caret
 		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
     	    	if (selectedText != null) {
     	    	    synthesizer.stop();
+    	    	    synthesizer.load(textComponent.getLocale());
     	    	    synthesizer.play(selectedText);
     	    	}
 	    } catch (SynthesisException e1) {}
@@ -107,9 +108,11 @@ public class FingonTextFieldUI extends BasicTextUI implements KeyListener, Caret
 	char typedChar = e.getKeyChar();
 	typedString = typedString + typedChar;
 	if (typedKeyCode == KeyEvent.VK_SPACE || typedKeyCode == KeyEvent.VK_ENTER) {
+	    JTextComponent textComponent = (JTextComponent)e.getSource();
 	    try {
 		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
 		synthesizer.stop();
+		synthesizer.load(textComponent.getLocale());
 		synthesizer.play(typedString);
 	    } catch (SynthesisException e1) {}
 	    typedString = "";

@@ -87,6 +87,7 @@ public class FingonMenuItemUI extends FingonButtonUI implements PropertyChangeLi
 		    try {
 			SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
 		        synthesizer.stop();
+		        synthesizer.load(menuItem.getLocale());
 		        synthesizer.play(text);
 		    } catch (SynthesisException e1) {}
 		}

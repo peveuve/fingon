@@ -40,6 +40,7 @@ public class AccessibilityRenderer extends AbstractAction {
     public void actionPerformed(ActionEvent actionEvt) {
 	Component source = (Component)actionEvt.getSource();
 	AccessibleContext accessCtxt = source.getAccessibleContext();
+	renderSummary(accessCtxt);
 	renderHelp(accessCtxt);
     }
 
@@ -69,6 +70,7 @@ public class AccessibilityRenderer extends AbstractAction {
 	
 	try {
 	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthe.load(accessCtxt.getLocale());
 	    Locale locale = synthe.getEngineLocale();
 	    
 	    ResourceBundle label = ResourceBundle.getBundle("message", locale);
@@ -107,6 +109,7 @@ public class AccessibilityRenderer extends AbstractAction {
     	if (desc != null) {
 	    try {
 		SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
+		synthe.load(accessCtxt.getLocale());
 		synthe.play(desc);
 	    } catch (SynthesisException e) {}
     	}

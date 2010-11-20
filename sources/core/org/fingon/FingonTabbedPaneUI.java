@@ -102,6 +102,7 @@ public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener, 
     	    	    try {
     	    		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
     	    		synthesizer.stop();
+    	    		synthesizer.load(tabbedPane.getLocale());
     	    		synthesizer.play(selectedTabTitle);
     	    	    } catch (SynthesisException ex) {}
     	    	}

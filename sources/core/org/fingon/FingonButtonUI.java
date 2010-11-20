@@ -102,6 +102,7 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
 		try {
 		    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
 		    synthesizer.stop();
+		    synthesizer.load(button.getLocale());
 		    synthesizer.play(text);
 		} catch (SynthesisException e1) {}
 	    } else if (pressedSound != null) {

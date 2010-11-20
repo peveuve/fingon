@@ -99,6 +99,7 @@ public class FingonSliderUI extends SliderUI implements ChangeListener, FocusLis
 		    try {
     	    	        SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
     	    	        synthesizer.stop();
+    	    	        synthesizer.load(slider.getLocale());
     	    	        synthesizer.play(((JLabel)label).getText());
     	    	    } catch (SynthesisException ex) {}
 		}

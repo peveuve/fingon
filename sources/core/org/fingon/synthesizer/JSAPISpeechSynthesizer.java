@@ -171,34 +171,28 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
     public boolean load(Locale locale) throws SynthesisException {
 	String currentEngine = null;
 	if (synthe != null) {
-	    currentEngine = synthe.getEngineModeDesc().getEngineName();
+	    EngineModeDesc engineDesc = synthe.getEngineModeDesc();
+	    Locale currentLocale = engineDesc.getLocale();
+	    if (currentLocale.equals(locale)) {
+		return true;
+	    }
+	    currentEngine = engineDesc.getEngineName();
 	}
 	EngineList list = getAvailableSynthesizers();
 	for (int i = 0; i < list.size(); i++) {
 	    SynthesizerModeDesc eng = (SynthesizerModeDesc) list.get(i);
 	    Locale engineLocale = eng.getLocale();
 	    String engineName = eng.getEngineName();
+	    String engineMode = eng.getModeName();
 	    if (locale.getLanguage().equals(engineLocale.getLanguage())) {
-		if (currentEngine != null) {
-		    if (engineName.equals(currentEngine)) {
-                        loadEngine(engineName, eng.getModeName(), engineLocale);
-                        Voice[] voices = eng.getVoices();
-                        
-                        VoiceDesc voiceDesc = new VoiceDesc();
-                        voiceDesc.setName(voices[0].getName());
-                        voiceDesc.setGender(voices[0].getGender());
-                        voiceDesc.setAge(voices[0].getAge());
-                        loadVoice(voiceDesc);
-                        return true;
-		    }
-		} else {
-		    loadEngine(engineName, eng.getModeName(), engineLocale);
+		if (currentEngine == null || engineName.equals(currentEngine)) {
+                    loadEngine(engineName, engineMode, engineLocale);
                     Voice[] voices = eng.getVoices();
                     
-        	    VoiceDesc voiceDesc = new VoiceDesc();
-        	    voiceDesc.setName(voices[0].getName());
-        	    voiceDesc.setGender(voices[0].getGender());
-        	    voiceDesc.setAge(voices[0].getAge());
+                    VoiceDesc voiceDesc = new VoiceDesc();
+                    voiceDesc.setName(voices[0].getName());
+                    voiceDesc.setGender(voices[0].getGender());
+                    voiceDesc.setAge(voices[0].getAge());
                     loadVoice(voiceDesc);
                     return true;
 		}

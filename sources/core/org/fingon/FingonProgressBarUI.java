@@ -129,9 +129,9 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
         	try {
 		    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
 	    	    synthesizer.stop();
+	    	    synthesizer.load(progressBar.getLocale());
 		    synthesizer.play(string);
-		} catch (SynthesisException e) {
-		}
+		} catch (SynthesisException e) {}
             }
         }
     }

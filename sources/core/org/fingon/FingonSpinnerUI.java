@@ -93,6 +93,7 @@ public class FingonSpinnerUI extends SpinnerUI implements ChangeListener, FocusL
 	try {
 	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
 	    synthesizer.stop();
+	    synthesizer.load(spinner.getLocale());
 	    synthesizer.play(text);
 	} catch (SynthesisException e1) {}
     }

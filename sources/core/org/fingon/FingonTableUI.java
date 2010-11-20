@@ -104,6 +104,7 @@ public class FingonTableUI extends TableUI implements ListSelectionListener, Foc
     	    		try {
     	    		    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
     	    		    synthesizer.stop();
+    	    		    synthesizer.load(table.getLocale());
     	    		    synthesizer.play(cell.toString());
     	    		} catch (SynthesisException e1) {}
     	    	    }

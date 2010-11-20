@@ -35,12 +35,6 @@ import org.fingon.synthesizer.SynthesisException;
 public class FingonButtonUI extends ButtonUI implements ActionListener, ItemListener, FocusListener {
     /** the instance common to every component */
     private static FingonButtonUI instance;
-    /** selected sound URL */
-    protected URL selectedSound;
-    /** pressed sound URL */
-    protected URL pressedSound;
-    /** unselected sound URL */
-    protected URL unselectedSound;
 
     /**
      * @see javax.swing.plaf.ComponentUI#installUI(javax.swing.JComponent)
@@ -55,9 +49,6 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
 	button.addActionListener(this);
 	button.addItemListener(this);
 	button.addFocusListener(this);
-	pressedSound = (URL)UIManager.get("Button.pressedSound");
-	selectedSound = (URL)UIManager.get("Button.selectedSound");
-	unselectedSound = (URL)UIManager.get("Button.unselectedSound");
     }
 
     /**
@@ -105,11 +96,17 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
 		    synthesizer.load(button.getLocale());
 		    synthesizer.play(text);
 		} catch (SynthesisException e1) {}
-	    } else if (pressedSound != null) {
-		try {
-		    SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
-		    player.play(pressedSound);
-		} catch (PlayException e1) {}
+	    } else {
+		URL pressedSound = (URL)button.getClientProperty("pressedSound");
+		if (pressedSound == null) {
+		    pressedSound = (URL)UIManager.get("Button.pressedSound");
+		}
+		if (pressedSound != null) {
+		    try {
+			SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
+			player.play(pressedSound);
+		    } catch (PlayException e1) {}
+		}
 	    }
 	}
     }
@@ -122,10 +119,18 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
 		SoundPlayer player = (SoundPlayer)PlayerFactory.getPlayerByExtension("wav");
 		int state = e.getStateChange();
 		if (state == ItemEvent.DESELECTED) {
+		    URL unselectedSound = (URL)button.getClientProperty("unselectedSound");
+		    if (unselectedSound == null) {
+			unselectedSound = (URL)UIManager.get("Button.unselectedSound");
+		    }
 		    if (unselectedSound != null) {
 			player.play(unselectedSound);
 		    }
 		} else if (state == ItemEvent.SELECTED) {
+		    URL selectedSound = (URL)button.getClientProperty("selectedSound");
+		    if (selectedSound == null) {
+			selectedSound = (URL)UIManager.get("Button.selectedSound");
+		    }
 		    if (selectedSound != null) {
 			player.play(selectedSound);
 		    }

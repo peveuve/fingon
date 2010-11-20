@@ -30,14 +30,6 @@ import org.fingon.synthesizer.SynthesisException;
 public class FingonOptionPaneUI extends BasicOptionPaneUI implements AncestorListener {
     /** the instance common to every component */
     private static FingonOptionPaneUI instance;
-    /** information sound URL */
-    private URL informationSound;
-    /** question sound URL */
-    private URL questionSound;
-    /** warning sound URL */
-    private URL warningSound;
-    /** error sound URL */
-    private URL errorSound;
 
     /**
      * @see javax.swing.plaf.ComponentUI#installUI(javax.swing.JComponent)
@@ -50,18 +42,6 @@ public class FingonOptionPaneUI extends BasicOptionPaneUI implements AncestorLis
 	ActionMap actionMap = optionPane.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	optionPane.addAncestorListener(this);
-	this.installDefaults();
-    }
-
-    /**
-     * @see javax.swing.plaf.basic.BasicOptionPaneUI#installDefaults()
-     */
-    @Override
-    protected void installDefaults() {
-	informationSound = (URL)UIManager.get("OptionPane.informationSound");
-	questionSound = (URL)UIManager.get("OptionPane.questionSound");
-	warningSound = (URL)UIManager.get("OptionPane.warningSound");
-	errorSound = (URL)UIManager.get("OptionPane.errorSound");
     }
 
     /**
@@ -103,20 +83,40 @@ public class FingonOptionPaneUI extends BasicOptionPaneUI implements AncestorLis
 	String message = optionPane.getMessage().toString();
 	URL soundUrl = null;
         if (messageType == JOptionPane.ERROR_MESSAGE) {
+            URL errorSound = (URL)optionPane.getClientProperty("errorSound");
+            if (errorSound == null) {
+    		errorSound = (URL)UIManager.get("OptionPane.errorSound");
+            }
             soundUrl = errorSound;
             if (!message.endsWith("!")) {
         	message = message.concat("!");
             }
         } else if (messageType == JOptionPane.INFORMATION_MESSAGE) {
+            URL informationSound = (URL)optionPane.getClientProperty("informationSound");
+            if (informationSound == null) {
+    		informationSound = (URL)UIManager.get("OptionPane.informationSound");
+            }
             soundUrl = informationSound;
         } else if (messageType == JOptionPane.PLAIN_MESSAGE) {
+            URL informationSound = (URL)optionPane.getClientProperty("informationSound");
+            if (informationSound == null) {
+    		informationSound = (URL)UIManager.get("OptionPane.informationSound");
+            }
             soundUrl = informationSound;
         } else if (messageType == JOptionPane.QUESTION_MESSAGE) {
+            URL questionSound = (URL)optionPane.getClientProperty("questionSound");
+            if (questionSound == null) {
+    		questionSound = (URL)UIManager.get("OptionPane.questionSound");
+            }
             soundUrl = questionSound;
             if (!message.endsWith("?")) {
         	message = message.concat("?");
             }
         } else if (messageType == JOptionPane.WARNING_MESSAGE) {
+            URL warningSound = (URL)optionPane.getClientProperty("warningSound");
+            if (warningSound == null) {
+    		warningSound = (URL)UIManager.get("OptionPane.warningSound");
+            }
             soundUrl = warningSound;
             if (!message.endsWith("!")) {
         	message = message.concat("!");

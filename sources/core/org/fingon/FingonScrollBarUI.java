@@ -1,6 +1,8 @@
 package org.fingon;
 
 import java.awt.Graphics;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.JComponent;
@@ -19,7 +21,7 @@ import org.fingon.player.PlayerFactory;
  * 
  * @author Paul-Emile
  */
-public class FingonScrollBarUI extends ScrollBarUI implements ChangeListener {
+public class FingonScrollBarUI extends ScrollBarUI implements ChangeListener, PropertyChangeListener {
     private MIDIPlayer midiPlayer;
     
     public FingonScrollBarUI() {
@@ -47,6 +49,7 @@ public class FingonScrollBarUI extends ScrollBarUI implements ChangeListener {
 	JScrollBar scrollBar = (JScrollBar)c;
 	BoundedRangeModel model = scrollBar.getModel();
 	model.addChangeListener(this);
+	scrollBar.addPropertyChangeListener(this);
 	Integer instrumentIndex = UIManager.getInt("ScrollBar.instrument");
 	if (midiPlayer != null) {
 	    midiPlayer.loadInstrument(instrumentIndex);
@@ -61,6 +64,7 @@ public class FingonScrollBarUI extends ScrollBarUI implements ChangeListener {
 	JScrollBar scrollBar = (JScrollBar)c;
 	BoundedRangeModel model = scrollBar.getModel();
 	model.removeChangeListener(this);
+	scrollBar.removePropertyChangeListener(this);
     }
 
     /**
@@ -98,6 +102,21 @@ public class FingonScrollBarUI extends ScrollBarUI implements ChangeListener {
 		    // apparently scrollbars values are changed continuously, 
 		    // so playing a note each time is unbearable 
 		}
+	    }
+	}
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+	String propertyName = evt.getPropertyName();
+	if (propertyName.equals("model")) {
+	    BoundedRangeModel newModel = (BoundedRangeModel)evt.getNewValue();
+	    if (newModel != null) {
+		newModel.addChangeListener(this);
+	    }
+	    BoundedRangeModel oldModel = (BoundedRangeModel)evt.getOldValue();
+	    if (oldModel != null) {
+		oldModel.removeChangeListener(this);
 	    }
 	}
     }

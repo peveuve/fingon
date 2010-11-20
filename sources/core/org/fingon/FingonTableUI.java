@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.accessibility.AccessibleContext;
 import javax.swing.ActionMap;
@@ -23,7 +25,7 @@ import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
 
-public class FingonTableUI extends TableUI implements ListSelectionListener, FocusListener {
+public class FingonTableUI extends TableUI implements ListSelectionListener, FocusListener, PropertyChangeListener {
 
     private JTable table;
     
@@ -51,6 +53,7 @@ public class FingonTableUI extends TableUI implements ListSelectionListener, Foc
 	ActionMap actionMap = table.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	table.addFocusListener(this);
+	table.addPropertyChangeListener(this);
 	ListSelectionModel selectionModel = table.getSelectionModel();
 	if (selectionModel != null) {
 	    selectionModel.addListSelectionListener(this);
@@ -68,6 +71,7 @@ public class FingonTableUI extends TableUI implements ListSelectionListener, Foc
 	ActionMap actionMap = table.getActionMap();
 	actionMap.remove("FingonUIHelp");
 	table.removeFocusListener(this);
+	table.removePropertyChangeListener(this);
 	ListSelectionModel selectionModel = table.getSelectionModel();
 	if (selectionModel != null) {
 	    selectionModel.removeListSelectionListener(this);
@@ -86,7 +90,6 @@ public class FingonTableUI extends TableUI implements ListSelectionListener, Foc
      * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
      */
     public void valueChanged(ListSelectionEvent e) {
-	//ListSelectionModel changedSelection = (ListSelectionModel)e.getSource();
 	if (table.isShowing()) {
 	    if (!e.getValueIsAdjusting()) {
     	    	int selectedRowIndex = table.getSelectedRow();
@@ -117,5 +120,20 @@ public class FingonTableUI extends TableUI implements ListSelectionListener, Foc
 
     @Override
     public void focusLost(FocusEvent e) {
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+	String propertyName = evt.getPropertyName();
+	if (propertyName.equals("selectionModel")) {
+	    ListSelectionModel newModel = (ListSelectionModel)evt.getNewValue();
+	    if (newModel != null) {
+		newModel.addListSelectionListener(this);
+	    }
+	    ListSelectionModel oldModel = (ListSelectionModel)evt.getOldValue();
+	    if (oldModel != null) {
+		oldModel.removeListSelectionListener(this);
+	    }
+	}
     }
 }

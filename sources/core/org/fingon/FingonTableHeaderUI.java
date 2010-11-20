@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -27,7 +29,7 @@ import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
 
-public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnModelListener, FocusListener {
+public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnModelListener, FocusListener, PropertyChangeListener {
     private static FingonTableHeaderUI instance;
     
     public FingonTableHeaderUI(JTableHeader c) {
@@ -56,6 +58,7 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
 	ActionMap actionMap = tableHeader.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	tableHeader.addFocusListener(this);
+	tableHeader.addPropertyChangeListener(this);
 	TableColumnModel columnModel = tableHeader.getColumnModel();
 	if (columnModel != null) {
 	    columnModel.addColumnModelListener(this);
@@ -73,6 +76,7 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
 	ActionMap actionMap = tableHeader.getActionMap();
 	actionMap.remove("FingonUIHelp");
 	tableHeader.removeFocusListener(this);
+	tableHeader.removePropertyChangeListener(this);
 	TableColumnModel columnModel = tableHeader.getColumnModel();
 	if (columnModel != null) {
 	    columnModel.removeColumnModelListener(this);
@@ -171,5 +175,20 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
 
     @Override
     public void focusLost(FocusEvent e) {
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+	String propertyName = evt.getPropertyName();
+	if (propertyName.equals("columnModel")) {
+	    TableColumnModel newModel = (TableColumnModel)evt.getNewValue();
+	    if (newModel != null) {
+		newModel.addColumnModelListener(this);
+	    }
+	    TableColumnModel oldModel = (TableColumnModel)evt.getOldValue();
+	    if (oldModel != null) {
+		oldModel.removeColumnModelListener(this);
+	    }
+	}
     }
 }

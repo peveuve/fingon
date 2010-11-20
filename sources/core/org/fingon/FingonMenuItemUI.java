@@ -1,8 +1,6 @@
 package org.fingon;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -24,7 +22,7 @@ import org.fingon.synthesizer.SynthesisException;
  * 
  * @author Paul-Emile
  */
-public class FingonMenuItemUI extends FingonButtonUI implements MouseListener, PropertyChangeListener {
+public class FingonMenuItemUI extends FingonButtonUI implements PropertyChangeListener {
     private JMenuItem menuItem;
 
     public FingonMenuItemUI() {
@@ -40,7 +38,6 @@ public class FingonMenuItemUI extends FingonButtonUI implements MouseListener, P
 	super.installUI(c);
 	menuItem = (JMenuItem)c;
 	menuItem.getAccessibleContext().addPropertyChangeListener(this);
-	//button.addMouseListener(this);
     }
 
     /**
@@ -52,7 +49,6 @@ public class FingonMenuItemUI extends FingonButtonUI implements MouseListener, P
 	super.uninstallUI(c);
 	menuItem = (JMenuItem)c;
 	menuItem.getAccessibleContext().removePropertyChangeListener(this);
-	//button.removeMouseListener(this);
     }
 
     /**
@@ -79,54 +75,6 @@ public class FingonMenuItemUI extends FingonButtonUI implements MouseListener, P
 		} catch (PlayException e1) {}
 	    }
 	}
-    }
-
-    /**
-     * 
-     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
-     */
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    /**
-     * 
-     * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
-     */
-    public void mouseEntered(MouseEvent e) {
-	AbstractButton componentGainingFocus = (AbstractButton)e.getSource();
-	String text = componentGainingFocus.getText();
-	if (text != null && !text.equals("")) {
-	    try {
-		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
-	        synthesizer.stop();
-	        synthesizer.play(text);
-	    } catch (SynthesisException e1) {}
-	}
-    }
-
-    /**
-     * 
-     * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
-     */
-    public void mouseExited(MouseEvent e) {
-	try {
-	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
-	    synthesizer.stop();
-	} catch (SynthesisException e1) {}
-    }
-
-    /**
-     * 
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
-     */
-    public void mousePressed(MouseEvent e) {
-    }
-
-    /**
-     * 
-     * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
-     */
-    public void mouseReleased(MouseEvent e) {
     }
 
     @Override

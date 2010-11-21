@@ -1,5 +1,6 @@
 package org.fingon.synthesizer;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import javax.speech.EngineModeDesc;
@@ -8,8 +9,12 @@ import javax.speech.EngineModeDesc;
  * Speech synthesizer engine description. Useful for display in combobox.
  * @author Paul-Emile
  */
-public class EngineDesc {
+public class EngineDesc implements Serializable {
 
+    /**
+     * EngineDesc.java long
+     */
+    private static final long serialVersionUID = 1L;
     private String engineName;
     private String modeName;
     private Locale locale;

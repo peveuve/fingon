@@ -1,10 +1,16 @@
 package org.fingon.synthesizer;
 
+import java.io.Serializable;
+
 /**
  * Speech voice description
  * @author Paul-Emile
  */
-public class VoiceDesc {
+public class VoiceDesc implements Serializable {
+    /**
+     * VoiceDesc.java long
+     */
+    private static final long serialVersionUID = 1L;
     /**  */
     private int age;
     /**  */

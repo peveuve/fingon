@@ -39,9 +39,9 @@ public class FingonLookAndFeel extends LookAndFeel {
 	uiDefaults.put("RadioButtonMenuItemUI", "org.fingon.FingonMenuItemUI");
 	uiDefaults.put("CheckBoxMenuItemUI", "org.fingon.FingonMenuItemUI");
 
-	UIManager.put("ProgressBarUI.backgroundMusic", getClass().getResource("Ground_Control_Human_Space_Pod.mp3"));
-	UIManager.put("ProgressBarUI.intermediateSound", getClass().getResource("Default.wav"));
-	UIManager.put("ProgressBarUI.finalSound", getClass().getResource("new_Mail.wav"));
+	UIManager.put("ProgressBar.backgroundMusic", getClass().getResource("Ground_Control_Human_Space_Pod.mp3"));
+	UIManager.put("ProgressBar.intermediateSound", getClass().getResource("Default.wav"));
+	UIManager.put("ProgressBar.finalSound", getClass().getResource("new_Mail.wav"));
 	uiDefaults.put("ProgressBarUI", "org.fingon.FingonProgressBarUI");
 
 	UIManager.put("OptionPane.informationSound", getClass().getResource("Balloon.wav"));

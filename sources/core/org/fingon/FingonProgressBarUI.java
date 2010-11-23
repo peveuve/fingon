@@ -86,7 +86,7 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
                 if (progressBar.isIndeterminate()) {
                     URL indeterminateMusicUrl = (URL)progressBar.getClientProperty("backgroundMusic");
                     if (indeterminateMusicUrl == null) {
-                	indeterminateMusicUrl = (URL)UIManager.get("ProgressBarUI.backgroundMusic");
+                	indeterminateMusicUrl = (URL)UIManager.get("ProgressBar.backgroundMusic");
                     }
                     if (indeterminateMusicUrl != null) {
                 	// start playing music
@@ -109,7 +109,7 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
                 	if (newValue == maxValue) {
                 	    URL finalDeterminateUrl = (URL)progressBar.getClientProperty("finalSound");
                 	    if (finalDeterminateUrl == null) {
-                		finalDeterminateUrl = (URL)UIManager.get("ProgressBarUI.finalSound");
+                		finalDeterminateUrl = (URL)UIManager.get("ProgressBar.finalSound");
                 	    }
                 	    if (finalDeterminateUrl != null) {
                 		soundPlayer.play(finalDeterminateUrl);
@@ -117,7 +117,7 @@ public class FingonProgressBarUI extends ProgressBarUI implements PropertyChange
                 	} else {
                 	    URL intermediateDeterminateUrl = (URL)progressBar.getClientProperty("intermediateSound");
                 	    if (intermediateDeterminateUrl == null) {
-                		intermediateDeterminateUrl = (URL)UIManager.get("ProgressBarUI.intermediateSound");
+                		intermediateDeterminateUrl = (URL)UIManager.get("ProgressBar.intermediateSound");
                 	    }
                 	    if (intermediateDeterminateUrl != null) {
                 		soundPlayer.play(intermediateDeterminateUrl);

@@ -74,6 +74,12 @@ public class FingonLookAndFeel extends LookAndFeel {
 	UIManager.put("Tree.expandedSound", getClass().getResource("login.wav"));
 	UIManager.put("Tree.collapsedSound", getClass().getResource("logout.wav"));
 	uiDefaults.put("TreeUI", "org.fingon.FingonTreeUI");
+
+	UIManager.put("InternalFrame.openedSound", getClass().getResource("login.wav"));
+	UIManager.put("InternalFrame.closedSound", getClass().getResource("logout.wav"));
+	UIManager.put("InternalFrame.iconifiedSound", getClass().getResource("Connect.wav"));
+	UIManager.put("InternalFrame.deiconifiedSound", getClass().getResource("Disconnect.wav"));
+	uiDefaults.put("InternalFrameUI", "org.fingon.FingonInternalFrameUI");
 	
 	new FingonTrayIcon();
     }

@@ -3,7 +3,7 @@ package org.fingon;
 import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 
-public class FingonTextAreaUI extends FingonTextFieldUI {
+public class FingonTextAreaUI extends FingonTextUI {
 
     /**
      * 

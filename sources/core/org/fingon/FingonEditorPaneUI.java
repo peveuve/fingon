@@ -7,7 +7,7 @@ import javax.swing.plaf.ComponentUI;
  * 
  * @author Paul-Emile
  */
-public class FingonEditorPaneUI extends FingonTextFieldUI {
+public class FingonEditorPaneUI extends FingonTextUI {
 
     /**
      * 

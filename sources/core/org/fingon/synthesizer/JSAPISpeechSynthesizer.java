@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,9 +25,12 @@ import javax.speech.EngineException;
 import javax.speech.EngineList;
 import javax.speech.EngineModeDesc;
 import javax.speech.EngineStateError;
+import javax.speech.synthesis.SpeakableEvent;
+import javax.speech.synthesis.SpeakableListener;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerModeDesc;
 import javax.speech.synthesis.SynthesizerProperties;
+import javax.speech.synthesis.SynthesizerQueueItem;
 import javax.speech.synthesis.Voice;
 
 /**
@@ -34,7 +38,7 @@ import javax.speech.synthesis.Voice;
  * Fits any JSAPI implementation.
  * @author Paul-Emile
  */
-public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
+public class JSAPISpeechSynthesizer implements SpeechSynthesizer, SpeakableListener {
     /** logger */
     private Logger logger = Logger.getLogger(JSAPISpeechSynthesizer.class);
     /** speech synthesizer */
@@ -517,8 +521,10 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
      * @param text text to speak
      */
     public void play(String text) {
+	// it is necessary to set a speakable listener, so TalkingJava
+	// will be able to cancel the SynthesizerQueueItem generated
 	try {
-	    synthe.speakPlainText(text, null);
+	    synthe.speakPlainText(text, this);
 	} catch (EngineStateError e) {
 	    logger.error("engine state error : " + e.getMessage());
 	}
@@ -529,8 +535,10 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
      * @param text
      */
     public void playAndWait(String text) {
+	// it is necessary to set a speakable listener, so TalkingJava
+	// will be able to cancel the SynthesizerQueueItem generated
 	try {
-	    synthe.speakPlainText(text, null);
+	    synthe.speakPlainText(text, this);
 	    synthe.waitEngineState(Synthesizer.QUEUE_EMPTY);
 	} catch (EngineStateError e) {
 	    logger.error("engine state error : " + e.getMessage());
@@ -556,6 +564,36 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
 	fireReadingStoppedEvent(event);
     }
 
+    /**
+     * Cancels this text from the text to speak queue.
+     * @see org.fingon.synthesizer.SpeechSynthesizer#cancel(java.lang.String)
+     */
+    @SuppressWarnings("unchecked")
+    public void cancel(String text) {
+	// TalkingJava and FreeTTS can only cancel a SynthesizerQueueItem, not the text itself
+	Enumeration<SynthesizerQueueItem> enumQueue = synthe.enumerateQueue();
+	SynthesizerQueueItem itemToCancel = null;
+	while (enumQueue.hasMoreElements()) {
+	    SynthesizerQueueItem aQueuedItem = enumQueue.nextElement();
+	    Object aQueuedText = aQueuedItem.getSource();
+	    if (aQueuedText.equals(text)) {
+		itemToCancel = aQueuedItem;
+		break;
+	    }
+	}
+	if (itemToCancel != null) {
+	    try {
+		synthe.cancel(itemToCancel);
+	    } catch (EngineStateError e) {
+        	logger.error("engine state error : " + e.getMessage());
+	    } catch (IllegalArgumentException e) {
+		// an IllegalArgumentException occurs if the text has already been spoken
+		// and was removed from the queue. In this case, nothing to do.
+		logger.error("the text was not cancel and remove from the queue: " + e.getMessage());
+	    }
+	}
+    }
+    
     /**
      * Pause the current speech : set a flag and pause the engine
      */
@@ -892,6 +930,38 @@ public class JSAPISpeechSynthesizer implements SpeechSynthesizer {
 	    return true;
 	}
 	return false;
+    }
+
+    @Override
+    public void markerReached(SpeakableEvent arg0) {
+    }
+
+    @Override
+    public void speakableCancelled(SpeakableEvent arg0) {
+    }
+
+    @Override
+    public void speakableEnded(SpeakableEvent arg0) {
+    }
+
+    @Override
+    public void speakablePaused(SpeakableEvent arg0) {
+    }
+
+    @Override
+    public void speakableResumed(SpeakableEvent arg0) {
+    }
+
+    @Override
+    public void speakableStarted(SpeakableEvent arg0) {
+    }
+
+    @Override
+    public void topOfQueue(SpeakableEvent arg0) {
+    }
+
+    @Override
+    public void wordStarted(SpeakableEvent arg0) {
     }
     
     /**

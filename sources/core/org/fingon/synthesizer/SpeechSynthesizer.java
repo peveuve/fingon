@@ -22,6 +22,11 @@ public interface SpeechSynthesizer extends Player {
      */
     public void playAndWait(String text);
     /**
+     * Cancels a text to speak in the queue.
+     * @param text the text to cancel
+     */
+    public void cancel(String text);
+    /**
      * load engine and default voice
      */
     public void load() throws SynthesisException;

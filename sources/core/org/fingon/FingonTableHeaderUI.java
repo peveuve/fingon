@@ -31,6 +31,11 @@ import org.fingon.synthesizer.SynthesisException;
 
 public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnModelListener, FocusListener, PropertyChangeListener {
     private static FingonTableHeaderUI instance;
+    /** 
+     * Last accessibility summary sent to the speaker when a component get the focus.
+     * The last one will always be the one losing the focus, and so the one to cancel.
+     */
+    private String accessibilitySummary;
     
     public FingonTableHeaderUI(JTableHeader c) {
     }
@@ -170,11 +175,15 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
     @Override
     public void focusGained(FocusEvent e) {
 	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
     }
 
     @Override
     public void focusLost(FocusEvent e) {
+	try {
+	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthe.cancel(accessibilitySummary);
+	} catch (SynthesisException ex) {}
     }
 
     @Override

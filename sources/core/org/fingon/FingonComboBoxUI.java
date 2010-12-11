@@ -24,6 +24,8 @@ import org.fingon.synthesizer.SynthesisException;
 public class FingonComboBoxUI extends ComboBoxUI implements FocusListener, ActionListener {
     /** the instance common to every component */
     private static FingonComboBoxUI instance;
+    /** last accessibility summary sent to the speaker */
+    private String accessibilitySummary;
 
     /**
      * Returns the instance of UI
@@ -89,11 +91,15 @@ public class FingonComboBoxUI extends ComboBoxUI implements FocusListener, Actio
     @Override
     public void focusGained(FocusEvent e) {
 	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
     }
 
     @Override
     public void focusLost(FocusEvent e) {
+	try {
+	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthe.cancel(accessibilitySummary);
+	} catch (SynthesisException ex) {}
     }
 
     @Override

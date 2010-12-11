@@ -31,6 +31,11 @@ public class FingonSpinnerUI extends SpinnerUI implements ChangeListener, FocusL
 
     /** the instance common to every component */
     private static FingonSpinnerUI instance;
+    /** 
+     * Last accessibility summary sent to the speaker when a component get the focus.
+     * The last one will always be the one losing the focus, and so the one to cancel.
+     */
+    private String accessibilitySummary;
 
     /**
      * Returns the instance of UI
@@ -101,10 +106,14 @@ public class FingonSpinnerUI extends SpinnerUI implements ChangeListener, FocusL
     @Override
     public void focusGained(FocusEvent e) {
 	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
     }
 
     @Override
     public void focusLost(FocusEvent e) {
+	try {
+	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthe.cancel(accessibilitySummary);
+	} catch (SynthesisException ex) {}
     }
 }

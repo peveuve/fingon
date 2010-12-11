@@ -28,6 +28,11 @@ import org.fingon.synthesizer.SynthesisException;
  */
 public class FingonTextUI extends BasicTextUI implements KeyListener, CaretListener, FocusListener {
     protected String typedString = "";
+    /** 
+     * Last accessibility summary sent to the speaker when a component get the focus.
+     * The last one will always be the one losing the focus, and so the one to cancel.
+     */
+    private String accessibilitySummary;
     
     /**
      * 
@@ -130,11 +135,15 @@ public class FingonTextUI extends BasicTextUI implements KeyListener, CaretListe
     @Override
     public void focusGained(FocusEvent e) {
 	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
     }
 
     @Override
     public void focusLost(FocusEvent e) {
+	try {
+	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthe.cancel(accessibilitySummary);
+	} catch (SynthesisException ex) {}
     }
 
     @Override

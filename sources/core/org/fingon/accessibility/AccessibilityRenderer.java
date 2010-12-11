@@ -44,7 +44,7 @@ public class AccessibilityRenderer extends AbstractAction {
 	renderHelp(accessCtxt);
     }
 
-    public void renderSummary(AccessibleContext accessCtxt) {
+    public String renderSummary(AccessibleContext accessCtxt) {
 	String name = accessCtxt.getAccessibleName();
 	if (name == null) {
 	    name = "";
@@ -101,10 +101,13 @@ public class AccessibilityRenderer extends AbstractAction {
 	    msgArgs[3] = iconsDesc.toString();
 	    String formatedMsg = msg.format(msgArgs);
 	    synthe.play(formatedMsg);
-	} catch (SynthesisException e) {}
+	    return formatedMsg;
+	} catch (SynthesisException e) {
+	    return null;
+	}
     }
     
-    public void renderHelp(AccessibleContext accessCtxt) {	
+    public void renderHelp(AccessibleContext accessCtxt) {
     	String desc = accessCtxt.getAccessibleDescription();
     	if (desc != null) {
 	    try {

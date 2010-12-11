@@ -29,6 +29,11 @@ import org.fingon.synthesizer.SynthesisException;
 
 public class FingonSliderUI extends SliderUI implements ChangeListener, FocusListener {
     private MIDIPlayer midiPlayer;
+    /** 
+     * Last accessibility summary sent to the speaker when a component get the focus.
+     * The last one will always be the one losing the focus, and so the one to cancel.
+     */
+    private String accessibilitySummary;
     
     public FingonSliderUI() {
 	try {
@@ -141,10 +146,14 @@ public class FingonSliderUI extends SliderUI implements ChangeListener, FocusLis
     @Override
     public void focusGained(FocusEvent e) {
 	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
     }
 
     @Override
     public void focusLost(FocusEvent e) {
+	try {
+	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthe.cancel(accessibilitySummary);
+	} catch (SynthesisException ex) {}
     }
 }

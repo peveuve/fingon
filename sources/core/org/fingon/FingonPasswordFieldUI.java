@@ -21,6 +21,9 @@ import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.player.PlayException;
 import org.fingon.player.Player;
 import org.fingon.player.PlayerFactory;
+import org.fingon.synthesizer.SpeechSynthesizer;
+import org.fingon.synthesizer.SpeechSynthesizerFactory;
+import org.fingon.synthesizer.SynthesisException;
 
 /**
  * 
@@ -28,6 +31,11 @@ import org.fingon.player.PlayerFactory;
  */
 public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListener, FocusListener {
     private static FingonPasswordFieldUI instance;
+    /** 
+     * Last accessibility summary sent to the speaker when a component get the focus.
+     * The last one will always be the one losing the focus, and so the one to cancel.
+     */
+    private String accessibilitySummary;
     
     /**
      * 
@@ -113,10 +121,14 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
     @Override
     public void focusGained(FocusEvent e) {
 	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
     }
 
     @Override
     public void focusLost(FocusEvent e) {
+	try {
+	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthe.cancel(accessibilitySummary);
+	} catch (SynthesisException ex) {}
     }
 }

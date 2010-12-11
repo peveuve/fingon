@@ -30,6 +30,11 @@ import org.fingon.synthesizer.SynthesisException;
 public class FingonListUI extends ListUI implements ListSelectionListener, FocusListener {
     /** the instance common to every component */
     private static FingonListUI instance;
+    /** 
+     * Last accessibility summary sent to the speaker when a component get the focus.
+     * The last one will always be the one losing the focus, and so the one to cancel.
+     */
+    private String accessibilitySummary;
 
     /**
      * Returns the instance of UI
@@ -119,10 +124,14 @@ public class FingonListUI extends ListUI implements ListSelectionListener, Focus
     @Override
     public void focusGained(FocusEvent e) {
 	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
+	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
     }
 
     @Override
     public void focusLost(FocusEvent e) {
+	try {
+	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthe.cancel(accessibilitySummary);
+	} catch (SynthesisException ex) {}
     }
 }

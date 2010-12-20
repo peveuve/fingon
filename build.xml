@@ -44,5 +44,65 @@
 		<!--
 		<signjar jar="archives/fingon.jar" alias="peveuve" storepass="wyoming" />
 		-->
+		
+		<zip destfile="archives/Fingon_1.0_FreeTTS.zip" update="true" filesonly="true" encoding="UTF-8">
+			<fileset dir="lib">
+				<include name="jsapi.jar"/>
+				<include name="log4j-1.2.4.jar"/>
+				<!-- java sound -->
+				<include name="tritonus_share-0.3.6.jar"/>
+				<include name="jl1.0.1.jar"/>
+				<include name="mp3spi1.9.4.jar"/>
+				<include name="tritonus_jorbis-0.3.6.jar"/>
+				<include name="jogg-0.0.7.jar"/>
+				<include name="jorbis-0.0.15.jar"/>
+				<!-- FreeTTS -->
+				<include name="cmu_us_kal.jar"/>
+				<include name="cmudict04.jar"/>
+				<include name="cmulex.jar"/>
+				<include name="en_us.jar"/>
+				<include name="freetts-jsapi10.jar"/>
+				<include name="freetts.jar"/>
+			</fileset>
+			<fileset dir="archives">
+				<include name="fingon.jar"/>
+				<include name="fingon-freetts-synthesizer.jar"/>
+			</fileset>
+			<fileset dir=".">
+				<include name="README_FreeTTS.txt"/>
+				<include name="soundbank.gm"/>
+				<include name="speech.properties"/>
+			</fileset>
+		</zip>
+
+		<zip destfile="archives/Fingon_1.0_TalkingJava.zip" update="true" filesonly="true" encoding="UTF-8">
+			<fileset dir="lib">
+				<include name="jsapi.jar"/>
+				<include name="log4j-1.2.4.jar"/>
+				<!-- java sound -->
+				<include name="tritonus_share-0.3.6.jar"/>
+				<include name="jl1.0.1.jar"/>
+				<include name="mp3spi1.9.4.jar"/>
+				<include name="tritonus_jorbis-0.3.6.jar"/>
+				<include name="jogg-0.0.7.jar"/>
+				<include name="jorbis-0.0.15.jar"/>
+			</fileset>
+			<fileset dir="lib/windows/ext">
+				<include name="cgjsapi.jar"/>
+			</fileset>
+			<fileset dir="lib/windows/x86">
+				<include name="cgjsapi170.dll"/>
+			</fileset>
+			<fileset dir="archives">
+				<include name="fingon.jar"/>
+				<include name="fingon-talkingjava-synthesizer.jar"/>
+			</fileset>
+			<fileset dir=".">
+				<include name="README_TalkingJava.txt"/>
+				<include name="soundbank.gm"/>
+				<include name="speech.properties"/>
+			</fileset>
+		</zip>
+		
 	</target>
 </project>

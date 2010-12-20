@@ -3,14 +3,10 @@ package org.fingon;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.net.URL;
 
-import javax.accessibility.AccessibleContext;
 import javax.swing.AbstractButton;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -32,14 +28,9 @@ import org.fingon.synthesizer.SynthesisException;
  * 
  * @author Paul-Emile
  */
-public class FingonButtonUI extends ButtonUI implements ActionListener, ItemListener, FocusListener {
+public class FingonButtonUI extends ButtonUI implements ActionListener, ItemListener {
     /** the instance common to every component */
     private static FingonButtonUI instance;
-    /** 
-     * Last accessibility summary sent to the speaker when a component get the focus.
-     * The last one will always be the one losing the focus, and so the one to cancel.
-     */
-    private String accessibilitySummary;
 
     /**
      * @see javax.swing.plaf.ComponentUI#installUI(javax.swing.JComponent)
@@ -48,12 +39,13 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
     public void installUI(JComponent c) {
 	AbstractButton button = (AbstractButton)c;
 	InputMap inputMap = button.getInputMap();
-	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.put(KeyStroke.getKeyStroke(helpKey), "FingonUIHelp");
 	ActionMap actionMap = button.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	button.addActionListener(this);
 	button.addItemListener(this);
-	button.addFocusListener(this);
+	button.addFocusListener(AccessibilityRenderer.getInstance());
     }
 
     /**
@@ -63,12 +55,13 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
     public void uninstallUI(JComponent c) {
 	AbstractButton button = (AbstractButton)c;
 	InputMap inputMap = button.getInputMap();
-	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.remove(KeyStroke.getKeyStroke(helpKey));
 	ActionMap actionMap = button.getActionMap();
 	actionMap.remove("FingonUIHelp");
 	button.removeActionListener(this);
 	button.removeItemListener(this);
-	button.removeFocusListener(this);
+	button.removeFocusListener(AccessibilityRenderer.getInstance());
     }
 
     /**
@@ -142,19 +135,5 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
 		}
 	    } catch (PlayException e1) {}
 	}
-    }
-
-    @Override
-    public void focusGained(FocusEvent e) {
-	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-	try {
-	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
-	    synthe.cancel(accessibilitySummary);
-	} catch (SynthesisException ex) {}
     }
 }

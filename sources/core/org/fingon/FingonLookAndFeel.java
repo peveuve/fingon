@@ -80,6 +80,8 @@ public class FingonLookAndFeel extends LookAndFeel {
 	UIManager.put("InternalFrame.iconifiedSound", getClass().getResource("Connect.wav"));
 	UIManager.put("InternalFrame.deiconifiedSound", getClass().getResource("Disconnect.wav"));
 	uiDefaults.put("InternalFrameUI", "org.fingon.FingonInternalFrameUI");
+
+	UIManager.put("Fingon.helpKey", "released F1");
 	
 	new FingonTrayIcon();
     }

@@ -2,16 +2,12 @@ package org.fingon;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import javax.accessibility.AccessibleContext;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
@@ -41,14 +37,9 @@ import org.fingon.synthesizer.SynthesisException;
  * @author Paul-Emile
  * 
  */
-public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeExpansionListener, TreeModelListener, PropertyChangeListener, FocusListener {
+public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeExpansionListener, TreeModelListener, PropertyChangeListener {
     /** the instance common to every component */
     private static FingonTreeUI instance;
-    /** 
-     * Last accessibility summary sent to the speaker when a component get the focus.
-     * The last one will always be the one losing the focus, and so the one to cancel.
-     */
-    private String accessibilitySummary;
 
     /**
      * Returns the instance of UI
@@ -69,13 +60,14 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
     public void installUI(JComponent c) {
 	JTree tree = (JTree)c;
 	InputMap inputMap = tree.getInputMap();
-	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.put(KeyStroke.getKeyStroke(helpKey), "FingonUIHelp");
 	ActionMap actionMap = tree.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	tree.addTreeSelectionListener(this);
 	tree.addTreeExpansionListener(this);
 	tree.addPropertyChangeListener(this);
-	tree.addFocusListener(this);
+	tree.addFocusListener(AccessibilityRenderer.getInstance());
 	TreeModel treeModel = tree.getModel();
 	if (treeModel != null) {
 	    treeModel.addTreeModelListener(this);
@@ -89,13 +81,14 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
     public void uninstallUI(JComponent c) {
 	JTree tree = (JTree)c;
 	InputMap inputMap = tree.getInputMap();
-	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.remove(KeyStroke.getKeyStroke(helpKey));
 	ActionMap actionMap = tree.getActionMap();
 	actionMap.remove("FingonUIHelp");
 	tree.removeTreeSelectionListener(this);
 	tree.removeTreeExpansionListener(this);
 	tree.removePropertyChangeListener(this);
-	tree.removeFocusListener(this);
+	tree.removeFocusListener(AccessibilityRenderer.getInstance());
 	TreeModel treeModel = tree.getModel();
 	if (treeModel != null) {
 	    treeModel.removeTreeModelListener(this);
@@ -351,19 +344,5 @@ public class FingonTreeUI extends TreeUI implements TreeSelectionListener, TreeE
 		oldTreeModel.removeTreeModelListener(this);
 	    }
 	}
-    }
-
-    @Override
-    public void focusGained(FocusEvent e) {
-	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-	try {
-	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
-	    synthe.cancel(accessibilitySummary);
-	} catch (SynthesisException ex) {}
     }
 }

@@ -2,7 +2,6 @@ package org.fingon;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
@@ -14,6 +13,7 @@ import javax.swing.InputMap;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.colorchooser.ColorSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -51,7 +51,8 @@ public class FingonColorChooserUI extends ColorChooserUI implements ChangeListen
     public void installUI(JComponent c) {
 	JColorChooser colorChooser = (JColorChooser)c;
 	InputMap inputMap = colorChooser.getInputMap();
-	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.put(KeyStroke.getKeyStroke(helpKey), "FingonUIHelp");
 	ActionMap actionMap = colorChooser.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	ColorSelectionModel colorModel = colorChooser.getSelectionModel();
@@ -68,7 +69,8 @@ public class FingonColorChooserUI extends ColorChooserUI implements ChangeListen
     public void uninstallUI(JComponent c) {
 	JColorChooser colorChooser = (JColorChooser)c;
 	InputMap inputMap = colorChooser.getInputMap();
-	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.remove(KeyStroke.getKeyStroke(helpKey));
 	ActionMap actionMap = colorChooser.getActionMap();
 	actionMap.remove("FingonUIHelp");
 	ColorSelectionModel colorModel = colorChooser.getSelectionModel();

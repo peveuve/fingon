@@ -1,19 +1,16 @@
 package org.fingon;
 
 import java.awt.Graphics;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.accessibility.AccessibleContext;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.ComponentUI;
@@ -25,14 +22,9 @@ import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
 
-public class FingonTableUI extends TableUI implements ListSelectionListener, FocusListener, PropertyChangeListener {
+public class FingonTableUI extends TableUI implements ListSelectionListener, PropertyChangeListener {
 
     private JTable table;
-    /** 
-     * Last accessibility summary sent to the speaker when a component get the focus.
-     * The last one will always be the one losing the focus, and so the one to cancel.
-     */
-    private String accessibilitySummary;
     
     public FingonTableUI(JTable c) {
 	this.table = c;
@@ -54,10 +46,11 @@ public class FingonTableUI extends TableUI implements ListSelectionListener, Foc
     public void installUI(JComponent c) {
 	JTable table = (JTable)c;
 	InputMap inputMap = table.getInputMap();
-	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.put(KeyStroke.getKeyStroke(helpKey), "FingonUIHelp");
 	ActionMap actionMap = table.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
-	table.addFocusListener(this);
+	table.addFocusListener(AccessibilityRenderer.getInstance());
 	table.addPropertyChangeListener(this);
 	ListSelectionModel selectionModel = table.getSelectionModel();
 	if (selectionModel != null) {
@@ -72,10 +65,11 @@ public class FingonTableUI extends TableUI implements ListSelectionListener, Foc
     public void uninstallUI(JComponent c) {
 	JTable table = (JTable)c;
 	InputMap inputMap = table.getInputMap();
-	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.remove(KeyStroke.getKeyStroke(helpKey));
 	ActionMap actionMap = table.getActionMap();
 	actionMap.remove("FingonUIHelp");
-	table.removeFocusListener(this);
+	table.removeFocusListener(AccessibilityRenderer.getInstance());
 	table.removePropertyChangeListener(this);
 	ListSelectionModel selectionModel = table.getSelectionModel();
 	if (selectionModel != null) {
@@ -116,20 +110,6 @@ public class FingonTableUI extends TableUI implements ListSelectionListener, Foc
     	    	}
 	    }
 	}
-    }
-
-    @Override
-    public void focusGained(FocusEvent e) {
-	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-	try {
-	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
-	    synthe.cancel(accessibilitySummary);
-	} catch (SynthesisException ex) {}
     }
 
     @Override

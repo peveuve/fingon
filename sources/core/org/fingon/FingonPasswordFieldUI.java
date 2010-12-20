@@ -1,13 +1,10 @@
 package org.fingon;
 
 import java.awt.Graphics;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.URL;
 
-import javax.accessibility.AccessibleContext;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
@@ -21,21 +18,13 @@ import org.fingon.accessibility.AccessibilityRenderer;
 import org.fingon.player.PlayException;
 import org.fingon.player.Player;
 import org.fingon.player.PlayerFactory;
-import org.fingon.synthesizer.SpeechSynthesizer;
-import org.fingon.synthesizer.SpeechSynthesizerFactory;
-import org.fingon.synthesizer.SynthesisException;
 
 /**
  * 
  * @author Paul-Emile
  */
-public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListener, FocusListener {
+public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListener {
     private static FingonPasswordFieldUI instance;
-    /** 
-     * Last accessibility summary sent to the speaker when a component get the focus.
-     * The last one will always be the one losing the focus, and so the one to cancel.
-     */
-    private String accessibilitySummary;
     
     /**
      * 
@@ -64,11 +53,12 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
 	super.installUI(c);
 	JPasswordField textc = (JPasswordField)c;
 	InputMap inputMap = textc.getInputMap();
-	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.put(KeyStroke.getKeyStroke(helpKey), "FingonUIHelp");
 	ActionMap actionMap = textc.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	textc.addKeyListener(this);
-	textc.addFocusListener(this);
+	textc.addFocusListener(AccessibilityRenderer.getInstance());
     }
     
     /**
@@ -79,11 +69,12 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
 	super.uninstallUI(c);
 	JPasswordField textc = (JPasswordField)c;
 	InputMap inputMap = textc.getInputMap();
-	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.remove(KeyStroke.getKeyStroke(helpKey));
 	ActionMap actionMap = textc.getActionMap();
 	actionMap.remove("FingonUIHelp");
 	textc.removeKeyListener(this);
-	textc.removeFocusListener(this);
+	textc.removeFocusListener(AccessibilityRenderer.getInstance());
     }
 
     /**
@@ -116,19 +107,5 @@ public class FingonPasswordFieldUI extends BasicTextFieldUI implements KeyListen
 		player.play(keyTypedSound);
 	    } catch (PlayException e) {}
 	}
-    }
-
-    @Override
-    public void focusGained(FocusEvent e) {
-	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-	try {
-	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
-	    synthe.cancel(accessibilitySummary);
-	} catch (SynthesisException ex) {}
     }
 }

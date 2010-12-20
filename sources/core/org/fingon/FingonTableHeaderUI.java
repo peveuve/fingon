@@ -1,19 +1,16 @@
 package org.fingon;
 
 import java.awt.Graphics;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import javax.accessibility.AccessibleContext;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -29,13 +26,8 @@ import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
 
-public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnModelListener, FocusListener, PropertyChangeListener {
+public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnModelListener, PropertyChangeListener {
     private static FingonTableHeaderUI instance;
-    /** 
-     * Last accessibility summary sent to the speaker when a component get the focus.
-     * The last one will always be the one losing the focus, and so the one to cancel.
-     */
-    private String accessibilitySummary;
     
     public FingonTableHeaderUI(JTableHeader c) {
     }
@@ -59,10 +51,11 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
     public void installUI(JComponent c) {
 	JTableHeader tableHeader = (JTableHeader)c;
 	InputMap inputMap = tableHeader.getInputMap();
-	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.put(KeyStroke.getKeyStroke(helpKey), "FingonUIHelp");
 	ActionMap actionMap = tableHeader.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
-	tableHeader.addFocusListener(this);
+	tableHeader.addFocusListener(AccessibilityRenderer.getInstance());
 	tableHeader.addPropertyChangeListener(this);
 	TableColumnModel columnModel = tableHeader.getColumnModel();
 	if (columnModel != null) {
@@ -77,10 +70,11 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
     public void uninstallUI(JComponent c) {
 	JTableHeader tableHeader = (JTableHeader)c;
 	InputMap inputMap = tableHeader.getInputMap();
-	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.remove(KeyStroke.getKeyStroke(helpKey));
 	ActionMap actionMap = tableHeader.getActionMap();
 	actionMap.remove("FingonUIHelp");
-	tableHeader.removeFocusListener(this);
+	tableHeader.removeFocusListener(AccessibilityRenderer.getInstance());
 	tableHeader.removePropertyChangeListener(this);
 	TableColumnModel columnModel = tableHeader.getColumnModel();
 	if (columnModel != null) {
@@ -170,20 +164,6 @@ public class FingonTableHeaderUI extends TableHeaderUI implements TableColumnMod
 
     @Override
     public void columnSelectionChanged(ListSelectionEvent e) {
-    }
-
-    @Override
-    public void focusGained(FocusEvent e) {
-	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-	try {
-	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
-	    synthe.cancel(accessibilitySummary);
-	} catch (SynthesisException ex) {}
     }
 
     @Override

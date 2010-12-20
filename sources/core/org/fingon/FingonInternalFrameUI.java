@@ -1,7 +1,6 @@
 package org.fingon;
 
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -52,7 +51,8 @@ public class FingonInternalFrameUI extends InternalFrameUI implements InternalFr
     public void installUI(JComponent c) {
 	JInternalFrame internalFrame = (JInternalFrame)c;
 	InputMap inputMap = internalFrame.getInputMap();
-	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.put(KeyStroke.getKeyStroke(helpKey), "FingonUIHelp");
 	ActionMap actionMap = internalFrame.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	internalFrame.addInternalFrameListener(this);
@@ -65,7 +65,8 @@ public class FingonInternalFrameUI extends InternalFrameUI implements InternalFr
     public void uninstallUI(JComponent c) {
 	JInternalFrame internalFrame = (JInternalFrame)c;
 	InputMap inputMap = internalFrame.getInputMap();
-	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.remove(KeyStroke.getKeyStroke(helpKey));
 	ActionMap actionMap = internalFrame.getActionMap();
 	actionMap.remove("FingonUIHelp");
 	internalFrame.removeInternalFrameListener(this);

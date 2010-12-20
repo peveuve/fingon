@@ -2,16 +2,13 @@ package org.fingon;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
 
-import javax.accessibility.AccessibleContext;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ComponentUI;
@@ -22,13 +19,8 @@ import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
 
-public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener, FocusListener {
+public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener {
     private static FingonTabbedPaneUI instance;
-    /** 
-     * Last accessibility summary sent to the speaker when a component get the focus.
-     * The last one will always be the one losing the focus, and so the one to cancel.
-     */
-    private String accessibilitySummary;
     
     public FingonTabbedPaneUI(JTabbedPane c) {
     }
@@ -52,11 +44,12 @@ public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener, 
     public void installUI(JComponent c) {
 	JTabbedPane tabbedPane = (JTabbedPane)c;
 	InputMap inputMap = tabbedPane.getInputMap();
-	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.put(KeyStroke.getKeyStroke(helpKey), "FingonUIHelp");
 	ActionMap actionMap = tabbedPane.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	tabbedPane.addChangeListener(this);
-	tabbedPane.addFocusListener(this);
+	tabbedPane.addFocusListener(AccessibilityRenderer.getInstance());
     }
 
     /**
@@ -66,11 +59,12 @@ public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener, 
     public void uninstallUI(JComponent c) {
 	JTabbedPane tabbedPane = (JTabbedPane)c;
 	InputMap inputMap = tabbedPane.getInputMap();
-	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.remove(KeyStroke.getKeyStroke(helpKey));
 	ActionMap actionMap = tabbedPane.getActionMap();
 	actionMap.remove("FingonUIHelp");
 	tabbedPane.removeChangeListener(this);
-	tabbedPane.removeFocusListener(this);
+	tabbedPane.removeFocusListener(AccessibilityRenderer.getInstance());
     }
 
     /**
@@ -113,19 +107,5 @@ public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener, 
     	    	}
 	    }
 	}
-    }
-
-    @Override
-    public void focusGained(FocusEvent e) {
-	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-	try {
-	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
-	    synthe.cancel(accessibilitySummary);
-	} catch (SynthesisException ex) {}
     }
 }

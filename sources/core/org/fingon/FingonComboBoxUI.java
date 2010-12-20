@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
 
 import javax.accessibility.AccessibleContext;
 import javax.swing.ActionMap;
@@ -13,6 +12,7 @@ import javax.swing.InputMap;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.plaf.ComboBoxUI;
 import javax.swing.plaf.ComponentUI;
 
@@ -21,11 +21,9 @@ import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
 
-public class FingonComboBoxUI extends ComboBoxUI implements FocusListener, ActionListener {
+public class FingonComboBoxUI extends ComboBoxUI implements ActionListener {
     /** the instance common to every component */
     private static FingonComboBoxUI instance;
-    /** last accessibility summary sent to the speaker */
-    private String accessibilitySummary;
 
     /**
      * Returns the instance of UI
@@ -45,12 +43,13 @@ public class FingonComboBoxUI extends ComboBoxUI implements FocusListener, Actio
     @Override
     public void installUI(JComponent c) {
 	JComboBox combobox = (JComboBox)c;
-	InputMap inputMap = combobox.getInputMap();
-	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	/*InputMap inputMap = combobox.getInputMap();
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.put(KeyStroke.getKeyStroke(helpKey), "FingonUIHelp");
 	ActionMap actionMap = combobox.getActionMap();
-	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());*/
 	combobox.addActionListener(this);
-	combobox.addFocusListener(this);
+	combobox.addFocusListener(AccessibilityRenderer.getInstance());
     }
 
     /**
@@ -59,12 +58,13 @@ public class FingonComboBoxUI extends ComboBoxUI implements FocusListener, Actio
     @Override
     public void uninstallUI(JComponent c) {
 	JComboBox combobox = (JComboBox)c;
-	InputMap inputMap = combobox.getInputMap();
-	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	/*InputMap inputMap = combobox.getInputMap();
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.remove(KeyStroke.getKeyStroke(helpKey));
 	ActionMap actionMap = combobox.getActionMap();
-	actionMap.remove("FingonUIHelp");
+	actionMap.remove("FingonUIHelp");*/
 	combobox.removeActionListener(this);
-	combobox.removeFocusListener(this);
+	combobox.removeFocusListener(AccessibilityRenderer.getInstance());
     }
 
     /**
@@ -86,20 +86,6 @@ public class FingonComboBoxUI extends ComboBoxUI implements FocusListener, Actio
 
     @Override
     public void setPopupVisible(JComboBox arg0, boolean arg1) {
-    }
-
-    @Override
-    public void focusGained(FocusEvent e) {
-	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-	try {
-	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
-	    synthe.cancel(accessibilitySummary);
-	} catch (SynthesisException ex) {}
     }
 
     @Override

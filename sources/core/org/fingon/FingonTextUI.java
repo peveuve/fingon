@@ -1,16 +1,14 @@
 package org.fingon;
 
 import java.awt.Graphics;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.accessibility.AccessibleContext;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.plaf.ComponentUI;
@@ -26,13 +24,8 @@ import org.fingon.synthesizer.SynthesisException;
  * 
  * @author Paul-Emile
  */
-public class FingonTextUI extends BasicTextUI implements KeyListener, CaretListener, FocusListener {
+public class FingonTextUI extends BasicTextUI implements KeyListener, CaretListener {
     protected String typedString = "";
-    /** 
-     * Last accessibility summary sent to the speaker when a component get the focus.
-     * The last one will always be the one losing the focus, and so the one to cancel.
-     */
-    private String accessibilitySummary;
     
     /**
      * 
@@ -58,12 +51,13 @@ public class FingonTextUI extends BasicTextUI implements KeyListener, CaretListe
 	super.installUI(c);
 	JTextComponent textc = (JTextComponent)c;
 	InputMap inputMap = textc.getInputMap();
-	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "FingonUIHelp");
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.put(KeyStroke.getKeyStroke(helpKey), "FingonUIHelp");
 	ActionMap actionMap = textc.getActionMap();
 	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	textc.addKeyListener(this);
 	textc.addCaretListener(this);
-	textc.addFocusListener(this);
+	textc.addFocusListener(AccessibilityRenderer.getInstance());
     }
     
     /**
@@ -74,12 +68,13 @@ public class FingonTextUI extends BasicTextUI implements KeyListener, CaretListe
 	super.uninstallUI(c);
 	JTextComponent textc = (JTextComponent)c;
 	InputMap inputMap = textc.getInputMap();
-	inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+	String helpKey = UIManager.getString("Fingon.helpKey");
+	inputMap.remove(KeyStroke.getKeyStroke(helpKey));
 	ActionMap actionMap = textc.getActionMap();
 	actionMap.remove("FingonUIHelp");
 	textc.removeKeyListener(this);
 	textc.removeCaretListener(this);
-	textc.removeFocusListener(this);
+	textc.removeFocusListener(AccessibilityRenderer.getInstance());
     }
 
     /**
@@ -130,20 +125,6 @@ public class FingonTextUI extends BasicTextUI implements KeyListener, CaretListe
     }
 
     public void keyTyped(KeyEvent e) {
-    }
-    
-    @Override
-    public void focusGained(FocusEvent e) {
-	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
-	accessibilitySummary = AccessibilityRenderer.getInstance().renderSummary(accessCtxt);
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-	try {
-	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
-	    synthe.cancel(accessibilitySummary);
-	} catch (SynthesisException ex) {}
     }
 
     @Override

@@ -2,6 +2,8 @@ package org.fingon.accessibility;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -18,12 +20,20 @@ import org.fingon.synthesizer.SpeechSynthesizer;
 import org.fingon.synthesizer.SpeechSynthesizerFactory;
 import org.fingon.synthesizer.SynthesisException;
 
-public class AccessibilityRenderer extends AbstractAction {
+public class AccessibilityRenderer extends AbstractAction implements FocusListener {
     /**
      * AccessibleContextRenderer.java long
      */
     private static final long serialVersionUID = 1L;
+    /** 
+     * the unique instance 
+     */
     private static AccessibilityRenderer instance;
+    /** 
+     * Last accessibility summary sent to the speaker when a component get the focus.
+     * The last one will always be the one losing the focus, and so the one to cancel.
+     */
+    private String accessibilitySummary;
 
     private AccessibilityRenderer() {
     	super();
@@ -116,5 +126,19 @@ public class AccessibilityRenderer extends AbstractAction {
 		synthe.play(desc);
 	    } catch (SynthesisException e) {}
     	}
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+	AccessibleContext accessCtxt = e.getComponent().getAccessibleContext();
+	accessibilitySummary = renderSummary(accessCtxt);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+	try {
+	    SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
+	    synthe.cancel(accessibilitySummary);
+	} catch (SynthesisException ex) {}
     }
 }

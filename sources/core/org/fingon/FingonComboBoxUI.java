@@ -3,10 +3,8 @@ package org.fingon;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
-import javax.accessibility.AccessibleContext;
+import javax.accessibility.Accessible;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComboBox;
@@ -43,11 +41,11 @@ public class FingonComboBoxUI extends ComboBoxUI implements ActionListener {
     @Override
     public void installUI(JComponent c) {
 	JComboBox combobox = (JComboBox)c;
-	/*InputMap inputMap = combobox.getInputMap();
+	InputMap inputMap = combobox.getInputMap();
 	String helpKey = UIManager.getString("Fingon.helpKey");
 	inputMap.put(KeyStroke.getKeyStroke(helpKey), "FingonUIHelp");
 	ActionMap actionMap = combobox.getActionMap();
-	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());*/
+	actionMap.put("FingonUIHelp", AccessibilityRenderer.getInstance());
 	combobox.addActionListener(this);
 	combobox.addFocusListener(AccessibilityRenderer.getInstance());
     }
@@ -58,11 +56,11 @@ public class FingonComboBoxUI extends ComboBoxUI implements ActionListener {
     @Override
     public void uninstallUI(JComponent c) {
 	JComboBox combobox = (JComboBox)c;
-	/*InputMap inputMap = combobox.getInputMap();
+	InputMap inputMap = combobox.getInputMap();
 	String helpKey = UIManager.getString("Fingon.helpKey");
 	inputMap.remove(KeyStroke.getKeyStroke(helpKey));
 	ActionMap actionMap = combobox.getActionMap();
-	actionMap.remove("FingonUIHelp");*/
+	actionMap.remove("FingonUIHelp");
 	combobox.removeActionListener(this);
 	combobox.removeFocusListener(AccessibilityRenderer.getInstance());
     }
@@ -86,6 +84,15 @@ public class FingonComboBoxUI extends ComboBoxUI implements ActionListener {
 
     @Override
     public void setPopupVisible(JComboBox arg0, boolean arg1) {
+    }
+
+    /**
+     * Overridden to avoid a StackOverflowError when getting the focus (do not call super.getAccessibleChild()).
+     * @see javax.swing.plaf.ComponentUI#getAccessibleChild(javax.swing.JComponent, int)
+     */
+    @Override
+    public Accessible getAccessibleChild(JComponent c, int i) {
+	return null;
     }
 
     @Override

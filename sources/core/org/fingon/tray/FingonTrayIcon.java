@@ -10,6 +10,8 @@ import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
@@ -68,6 +70,11 @@ public class FingonTrayIcon implements ActionListener, SynthesisListener {
         
         trayIcon = new TrayIcon(trayImage, label.getString("title"));
         trayIcon.addActionListener(this);
+        PopupMenu popup = new PopupMenu(label.getString("title"));
+        MenuItem speechSynthMenuItem = new MenuItem(label.getString("speechSynthSetting"));
+        speechSynthMenuItem.addActionListener(this);
+        popup.add(speechSynthMenuItem);
+        trayIcon.setPopupMenu(popup);
         SystemTray tray = SystemTray.getSystemTray();
         try {
 	    tray.add(trayIcon);
@@ -98,7 +105,7 @@ public class FingonTrayIcon implements ActionListener, SynthesisListener {
 	Graphics trayGraphics = trayImage.getGraphics();
 	// center the icons into the tray on the x axis
 	int iconx = (trayIconSize.width - flagIcon.getIconWidth())/2;
-	// draw the flag icon on top of the tray
+	// draw the flag icon to the top of the tray
 	trayGraphics.drawImage(flagImage, iconx, 0, null);
 	// draw the person icon to the bottom of the tray
 	int iconPersony = trayIconSize.height - personIcon.getIconHeight();

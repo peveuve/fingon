@@ -100,12 +100,14 @@ public class FingonComboBoxUI extends ComboBoxUI implements ActionListener {
 	JComboBox comboBox = (JComboBox)evt.getSource();
 	if (comboBox.isShowing()) {
 	    Object selectedItem = comboBox.getSelectedItem();
-	    try {
-	        SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
-	        synthesizer.stop();
-	        synthesizer.load(comboBox.getLocale());
-    	        synthesizer.play(selectedItem.toString());
-	    } catch (SynthesisException ex) {}
+	    if (selectedItem != null) {
+    	    	try {
+    	    	    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
+    	    	    synthesizer.stop();
+    	    	    synthesizer.load(comboBox.getLocale());
+        	    synthesizer.play(selectedItem.toString());
+    	    	} catch (SynthesisException ex) {}
+	    }
 	}
     }
 }

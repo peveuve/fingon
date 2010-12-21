@@ -125,6 +125,7 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	listEngine.setRenderer(engineRenderer);
 	listEngine.addItemListener(this);
 	this.getContentPane().add(listEngine);
+	languageLabel.setLabelFor(listEngine);
 
 	voiceLabel = new JLabel(label.getString("voice"));
 	this.getContentPane().add(voiceLabel);
@@ -137,6 +138,7 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	listVoices.setRenderer(voiceRenderer);
 	listVoices.addItemListener(this);
 	this.getContentPane().add(listVoices);
+	voiceLabel.setLabelFor(listVoices);
 
 	volumeLabel = new JLabel(label.getString("volume"));
 	this.getContentPane().add(volumeLabel);
@@ -151,6 +153,7 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	volumeSlide.setPaintTicks(true);
 	volumeSlide.addChangeListener(this);
 	this.getContentPane().add(volumeSlide);
+	volumeLabel.setLabelFor(volumeSlide);
 
 	rateLabel = new JLabel(label.getString("rate"));
 	this.getContentPane().add(rateLabel);
@@ -165,6 +168,7 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	rateSlide.setPaintTicks(true);
 	rateSlide.addChangeListener(this);
 	this.getContentPane().add(rateSlide);
+	rateLabel.setLabelFor(rateSlide);
 
 	pitchLabel = new JLabel(label.getString("pitch"));
 	this.getContentPane().add(pitchLabel);
@@ -179,6 +183,7 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	pitchSlide.setPaintTicks(true);
 	pitchSlide.addChangeListener(this);
 	this.getContentPane().add(pitchSlide);
+	pitchLabel.setLabelFor(pitchSlide);
 
 	pitchRangeLabel = new JLabel(label.getString("pitchRate"));
 	this.getContentPane().add(pitchRangeLabel);
@@ -193,6 +198,7 @@ public class SpeechSynthesizerDialog extends JDialog implements SynthesisListene
 	pitchRangeSlide.setPaintTicks(true);
 	pitchRangeSlide.addChangeListener(this);
 	this.getContentPane().add(pitchRangeSlide);
+	pitchRangeLabel.setLabelFor(pitchRangeSlide);
 
 	SpringUtilities.makeCompactGrid(this.getContentPane(), // parent
 		6, 2, // rows, cols

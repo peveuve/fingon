@@ -88,6 +88,7 @@ public class FingonButtonUI extends ButtonUI implements ActionListener, ItemList
 	if (button.isShowing()) {
 	    String text = button.getText();
 	    if (text != null && !text.equals("")) {
+		text = text.replaceAll("<[^>]+>", "");
 		try {
 		    SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
 		    synthesizer.stop();

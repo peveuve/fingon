@@ -58,6 +58,9 @@ public class AccessibilityRenderer extends AbstractAction implements FocusListen
 	String name = accessCtxt.getAccessibleName();
 	if (name == null) {
 	    name = "";
+	} else {
+	    // could be a label's text with HTML tags
+	    name = name.replaceAll("<[^>]+>", "");
 	}
 	StringBuilder iconsDesc = new StringBuilder("");
 	AccessibleIcon[] icons = accessCtxt.getAccessibleIcon();
@@ -120,6 +123,8 @@ public class AccessibilityRenderer extends AbstractAction implements FocusListen
     public void renderHelp(AccessibleContext accessCtxt) {
     	String desc = accessCtxt.getAccessibleDescription();
     	if (desc != null) {
+	    // could be a tooltip's text with HTML tags
+    	    desc = desc.replaceAll("<[^>]+>", "");
 	    try {
 		SpeechSynthesizer synthe = SpeechSynthesizerFactory.getSpeechSynthesizer();
 		synthe.load(accessCtxt.getLocale());

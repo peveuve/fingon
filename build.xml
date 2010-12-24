@@ -45,7 +45,7 @@
 		<signjar jar="archives/fingon.jar" alias="peveuve" storepass="wyoming" />
 		-->
 		
-		<zip destfile="archives/Fingon_1.0_FreeTTS.zip" update="true" filesonly="true" encoding="UTF-8">
+		<zip destfile="archives/Fingon_1.0_FreeTTS_AllPlatforms_OpenSource.zip" update="true" filesonly="true" encoding="UTF-8">
 			<fileset dir="lib">
 				<include name="jsapi.jar"/>
 				<include name="log4j-1.2.4.jar"/>
@@ -75,7 +75,7 @@
 			</fileset>
 		</zip>
 
-		<zip destfile="archives/Fingon_1.0_TalkingJava.zip" update="true" filesonly="true" encoding="UTF-8">
+		<zip destfile="archives/Fingon_1.0_TalkingJava_WindowsOnly_Commercial.zip" update="true" filesonly="true" encoding="UTF-8">
 			<fileset dir="lib">
 				<include name="jsapi.jar"/>
 				<include name="log4j-1.2.4.jar"/>

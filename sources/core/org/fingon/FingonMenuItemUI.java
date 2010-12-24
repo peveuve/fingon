@@ -90,6 +90,7 @@ public class FingonMenuItemUI extends FingonButtonUI implements PropertyChangeLi
 	    if (AccessibleState.FOCUSED.equals(newValue)) {
 		String text = menuItem.getText();
 		if (text != null && !text.equals("")) {
+		    text = text.replaceAll("<[^>]+>", "");
 		    try {
 			SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
 		        synthesizer.stop();

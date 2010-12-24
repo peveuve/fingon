@@ -98,6 +98,7 @@ public class FingonTabbedPaneUI extends TabbedPaneUI implements ChangeListener {
 	    if (selectedTabIndex != -1) {
     	    	String selectedTabTitle = tabbedPane.getTitleAt(selectedTabIndex);
     	    	if (selectedTabTitle != null) {
+    	    	    selectedTabTitle = selectedTabTitle.replaceAll("<[^>]+>", "");
     	    	    try {
     	    		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
     	    		synthesizer.stop();

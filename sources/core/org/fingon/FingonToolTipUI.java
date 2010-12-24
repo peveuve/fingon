@@ -62,6 +62,7 @@ public class FingonToolTipUI extends ToolTipUI implements AncestorListener {
 	JToolTip tooltip = (JToolTip)event.getComponent();
 	String tipText = tooltip.getTipText();
 	if (tipText != null) {
+	    tipText = tipText.replaceAll("<[^>]+>", "");
 	    try {
 		SpeechSynthesizer synthesizer = SpeechSynthesizerFactory.getSpeechSynthesizer();
 		synthesizer.stop();
